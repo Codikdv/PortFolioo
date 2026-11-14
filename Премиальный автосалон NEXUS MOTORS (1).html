@@ -1,0 +1,3005 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS MOTORS — Автосалон люкс- и спорткаров | Демонстрационный проект</title>
+  <meta name="description" content="NEXUS MOTORS — премиальный шоурум автомобилей люкс- и спорт-класса. Индивидуальный подбор, диагностика по 140 пунктам и доставка.">
+
+  <!-- Google Fonts: Cinzel (статусные заголовки) и Plus Jakarta Sans (интерфейс и ТТХ) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Конфигурация дизайн-токенов Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#08080A',
+            graphite: '#121317',
+            surface: '#181A20',
+            borderline: '#24262E',
+            platinum: '#F5F6F8',
+            silver: '#9CA3AF',
+            champagne: {
+              DEFAULT: '#D4AF37',
+              light: '#E5C558',
+              dark: '#AA8825'
+            }
+          },
+          fontFamily: {
+            display: ['"Cinzel"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif']
+          },
+          borderRadius: {
+            arch: '6px'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-obsidian: #08080A;
+      --bg-graphite: #121317;
+      --border-subtle: #24262E;
+      --accent-gold: #D4AF37;
+      --accent-gold-hover: #E5C558;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      background-color: var(--bg-obsidian);
+      color: #F5F6F8;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Архитектурный скроллбар */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #08080A;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #24262E;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D4AF37;
+    }
+
+    /* Стеклянная шапка */
+    .glass-nav {
+      background: rgba(8, 8, 10, 0.86);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+    }
+
+    /* Анимация появления элементов при прокрутке */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Карточка автомобиля с золотым свечением и масштабированием фото */
+    .car-card {
+      background-color: #121317;
+      border: 1px solid #24262E;
+      transition: border-color 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+    }
+    .car-card:hover {
+      border-color: rgba(212, 175, 55, 0.55);
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px -15px rgba(212, 175, 55, 0.14);
+    }
+    .car-card .car-photo {
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .car-card:hover .car-photo {
+      transform: scale(1.06);
+    }
+
+    /* Тонкая архитектурная сетка на фоне */
+    .grid-bg {
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* Кастомная стрелка для select */
+    select.luxury-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23D4AF37'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.85rem center;
+      background-size: 1rem;
+      padding-right: 2.5rem;
+    }
+
+    /* Плавный аккордеон FAQ */
+    .faq-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Анимация медленного зума главного баннера */
+    @keyframes heroZoom {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .hero-bg-zoom {
+      animation: heroZoom 24s ease-in-out infinite;
+    }
+
+    /* Всплывающие уведомления */
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(16px); }
+    }
+    .toast-in { animation: toastIn 0.3s ease forwards; }
+    .toast-out { animation: toastOut 0.25s ease forwards; }
+  </style>
+</head>
+<body class="antialiased selection:bg-champagne selection:text-obsidian">
+
+  <!-- ==================== 1. ШАПКА САЙТА (HEADER) ==================== -->
+  <header class="fixed top-0 left-0 right-0 z-40 glass-nav">
+    <!-- Дисклеймер портфолио -->
+    <div class="bg-graphite border-b border-borderline text-center py-1.5 px-4 text-[11px] sm:text-xs text-silver tracking-wide">
+      Демонстрационный коммерческий проект для портфолио — все цены, характеристики и контакты носят ознакомительный характер
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+        
+        <!-- Логотип NEXUS MOTORS -->
+        <a href="#hero" class="flex items-center gap-3.5 group focus:outline-none">
+          <!-- Геометрическая эмблема -->
+          <div class="w-10 h-10 rounded-arch bg-graphite border border-champagne/40 flex items-center justify-center transition-colors duration-300 group-hover:border-champagne">
+            <svg class="w-6 h-6 text-champagne" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 24V8L16 19.5V8" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/>
+              <path d="M16 24V12.5L27 24V8" stroke="#F5F6F8" stroke-width="2.2" stroke-linecap="square"/>
+            </svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-display text-lg sm:text-xl font-bold tracking-[0.22em] text-platinum leading-none">NEXUS MOTORS</span>
+            <span class="text-[9px] uppercase tracking-[0.34em] text-champagne mt-1.5">Luxury &amp; Performance</span>
+          </div>
+        </a>
+
+        <!-- Десктопное меню навигации -->
+        <nav class="hidden lg:flex items-center gap-7 text-xs uppercase tracking-[0.14em] font-medium text-silver">
+          <a href="#catalog" class="hover:text-champagne transition-colors py-2">Каталог</a>
+          <a href="#about" class="hover:text-champagne transition-colors py-2">О компании</a>
+          <a href="#advantages" class="hover:text-champagne transition-colors py-2">Преимущества</a>
+          <a href="#gallery" class="hover:text-champagne transition-colors py-2">Галерея</a>
+          <a href="#faq" class="hover:text-champagne transition-colors py-2">FAQ</a>
+          <a href="#contacts" class="hover:text-champagne transition-colors py-2">Контакты</a>
+        </nav>
+
+        <!-- Кнопка «Заказать звонок» + мобильный бургер -->
+        <div class="flex items-center gap-3">
+          <button type="button" data-open-request="Индивидуальный подбор" class="hidden sm:inline-flex items-center gap-2 bg-champagne hover:bg-champagne-light text-obsidian font-semibold text-xs uppercase tracking-[0.12em] px-5 py-3 rounded-arch transition-all duration-300 cursor-pointer">
+            <span>Заказать звонок</span>
+          </button>
+
+          <button id="mobile-menu-toggle" type="button" aria-label="Открыть меню" class="lg:hidden p-2.5 rounded-arch bg-graphite border border-borderline text-platinum hover:border-champagne transition-colors">
+            <svg id="icon-menu-open" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg id="icon-menu-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Выдвижное мобильное меню -->
+    <div id="mobile-nav" class="hidden lg:hidden bg-graphite border-b border-borderline px-4 pt-3 pb-6 space-y-1">
+      <a href="#catalog" class="mobile-link block px-4 py-3 rounded-arch text-sm uppercase tracking-wider text-platinum hover:bg-surface hover:text-champagne transition-colors">Каталог автомобилей</a>
+      <a href="#about" class="mobile-link block px-4 py-3 rounded-arch text-sm uppercase tracking-wider text-platinum hover:bg-surface hover:text-champagne transition-colors">О компании</a>
+      <a href="#advantages" class="mobile-link block px-4 py-3 rounded-arch text-sm uppercase tracking-wider text-platinum hover:bg-surface hover:text-champagne transition-colors">Преимущества</a>
+      <a href="#gallery" class="mobile-link block px-4 py-3 rounded-arch text-sm uppercase tracking-wider text-platinum hover:bg-surface hover:text-champagne transition-colors">Галерея шоурума</a>
+      <a href="#faq" class="mobile-link block px-4 py-3 rounded-arch text-sm uppercase tracking-wider text-platinum hover:bg-surface hover:text-champagne transition-colors">Вопросы и ответы</a>
+      <a href="#contacts" class="mobile-link block px-4 py-3 rounded-arch text-sm uppercase tracking-wider text-platinum hover:bg-surface hover:text-champagne transition-colors">Контакты</a>
+      <div class="pt-3 px-2">
+        <button type="button" data-open-request="Индивидуальный подбор" class="w-full bg-champagne hover:bg-champagne-light text-obsidian font-semibold text-xs uppercase tracking-[0.14em] py-3.5 rounded-arch transition-colors">
+          Заказать звонок
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== 2. ГЛАВНЫЙ ЭКРАН (HERO) ==================== -->
+  <section id="hero" class="relative min-h-screen flex items-center pt-28 pb-16 overflow-hidden">
+    <!-- Фоновое изображение премиального спорткара -->
+    <div class="absolute inset-0 z-0">
+      <img
+        src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1920&q=85"
+        alt="Флагманский спорткар в шоуруме NEXUS MOTORS"
+        class="w-full h-full object-cover object-center hero-bg-zoom"
+        onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/08080A/D4AF37?text=NEXUS+MOTORS+Flagship';"
+      >
+      <!-- Виньетка и градиент для контрастности -->
+      <div class="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/85 to-obsidian/35"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-obsidian/65"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div class="max-w-3xl">
+        <!-- Статусная плашка -->
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-arch bg-graphite/90 border border-champagne/30 text-champagne text-xs uppercase tracking-[0.2em] font-semibold mb-6">
+          <span class="w-2 h-2 rounded-full bg-champagne"></span>
+          <span>Флагманский автосалон в Алматы</span>
+        </div>
+
+        <!-- Главный заголовок -->
+        <h1 class="font-display text-3xl sm:text-5xl lg:text-6xl font-bold text-platinum leading-[1.12] tracking-wide mb-6">
+          Ваш следующий уровень <span class="text-champagne">начинается здесь</span>
+        </h1>
+
+        <!-- Подзаголовок -->
+        <p class="text-base sm:text-lg text-platinum/80 leading-relaxed max-w-2xl mb-9 font-light">
+          Индивидуальный подбор, техническая экспертиза и закрытые поставки автомобилей премиум- и люкс-класса с безупречной историей владения.
+        </p>
+
+        <!-- Кнопки действий -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+          <a href="#catalog" class="inline-flex items-center justify-center gap-3 bg-champagne hover:bg-champagne-light text-obsidian font-bold text-xs sm:text-sm uppercase tracking-[0.14em] px-8 py-4 rounded-arch transition-all duration-300 shadow-lg shadow-champagne/20 text-center">
+            <span>Смотреть автомобили</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+          <button type="button" data-open-request="Индивидуальный подбор" class="inline-flex items-center justify-center gap-2.5 bg-graphite/85 hover:bg-surface border border-borderline hover:border-champagne text-platinum font-semibold text-xs sm:text-sm uppercase tracking-[0.14em] px-8 py-4 rounded-arch backdrop-blur-md transition-all duration-300 cursor-pointer">
+            <span>Связаться с нами</span>
+          </button>
+        </div>
+
+        <!-- Ключевые показатели шоурума -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-14 pt-8 border-t border-white/10 max-w-2xl">
+          <div>
+            <p class="font-display text-2xl sm:text-3xl font-bold text-champagne">64+</p>
+            <p class="text-xs sm:text-sm text-silver mt-1">Эксклюзивных моделей в наличии</p>
+          </div>
+          <div>
+            <p class="font-display text-2xl sm:text-3xl font-bold text-champagne">140+</p>
+            <p class="text-xs sm:text-sm text-silver mt-1">Пунктов технической инспекции</p>
+          </div>
+          <div>
+            <p class="font-display text-2xl sm:text-3xl font-bold text-champagne">100%</p>
+            <p class="text-xs sm:text-sm text-silver mt-1">Доставка по всему Казахстану</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 3. КАТАЛОГ АВТОМОБИЛЕЙ ==================== -->
+  <section id="catalog" class="py-20 sm:py-28 bg-obsidian grid-bg border-t border-borderline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Заголовок каталога -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal">
+        <div>
+          <span class="text-champagne text-xs uppercase tracking-[0.26em] font-semibold">Актуальная коллекция</span>
+          <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-platinum mt-2">Каталог автомобилей</h2>
+        </div>
+        <p class="text-xs sm:text-sm text-silver max-w-md">
+          Все указанные цены и технические характеристики являются демонстрационными и представлены для ознакомления.
+        </p>
+      </div>
+
+      <!-- Панель поиска, фильтров и сортировки -->
+      <div class="bg-graphite border border-borderline rounded-arch p-5 sm:p-6 mb-10 reveal">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          
+          <!-- Поиск по названию -->
+          <div class="lg:col-span-1">
+            <label for="filter-search" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Поиск модели</label>
+            <div class="relative">
+              <input
+                type="text"
+                id="filter-search"
+                placeholder="Например, Porsche 911..."
+                class="w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch pl-9 pr-3.5 py-2.5 text-sm text-platinum placeholder-silver/50 focus:outline-none transition-colors"
+              >
+              <svg class="w-4 h-4 text-silver absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Фильтр по марке -->
+          <div>
+            <label for="filter-brand" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Марка</label>
+            <select id="filter-brand" class="luxury-select w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-3.5 py-2.5 text-sm text-platinum focus:outline-none transition-colors">
+              <option value="all">Все марки</option>
+            </select>
+          </div>
+
+          <!-- Фильтр по типу кузова -->
+          <div>
+            <label for="filter-body" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Тип кузова</label>
+            <select id="filter-body" class="luxury-select w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-3.5 py-2.5 text-sm text-platinum focus:outline-none transition-colors">
+              <option value="all">Все кузова</option>
+              <option value="Седан">Седан</option>
+              <option value="Купе">Купе</option>
+              <option value="Внедорожник">Внедорожник</option>
+              <option value="Кроссовер">Кроссовер</option>
+              <option value="Лифтбек">Лифтбек</option>
+              <option value="Суперкар">Суперкар</option>
+              <option value="Гиперкар">Гиперкар</option>
+              <option value="Минивэн / Семейный">Минивэн / Семейный</option>
+              <option value="Пикап">Пикап</option>
+              <option value="Хэтчбек">Хэтчбек</option>
+              <option value="Универсал">Универсал</option>
+              <option value="Родстер">Родстер</option>
+            </select>
+          </div>
+
+          <!-- Фильтр по бюджету -->
+          <div>
+            <label for="filter-price" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Бюджет (тенге)</label>
+            <select id="filter-price" class="luxury-select w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-3.5 py-2.5 text-sm text-platinum focus:outline-none transition-colors">
+              <option value="all">Все цены</option>
+              <option value="under50">До 50 млн ₸</option>
+              <option value="50to80">50 – 80 млн ₸</option>
+              <option value="80to150">80 – 150 млн ₸</option>
+              <option value="over150">Свыше 150 млн ₸</option>
+            </select>
+          </div>
+
+          <!-- Фильтр по типу кузова -->
+          <div>
+            <label for="filter-body" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Тип кузова</label>
+            <select id="filter-body" class="luxury-select w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-3.5 py-2.5 text-sm text-platinum focus:outline-none transition-colors">
+              <option value="all">Все кузова</option>
+              <option value="Седан">Седан</option>
+              <option value="Внедорожник">Внедорожник</option>
+              <option value="Купе">Купе</option>
+              <option value="Суперкар">Суперкар</option>
+              <option value="Лифтбек">Лифтбек</option>
+              <option value="Кроссовер">Кроссовер</option>
+            </select>
+          </div>
+
+          <!-- Фильтр по бюджету -->
+          <div>
+            <label for="filter-price" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Бюджет (тенге)</label>
+            <select id="filter-price" class="luxury-select w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-3.5 py-2.5 text-sm text-platinum focus:outline-none transition-colors">
+              <option value="all">Все цены</option>
+              <option value="under80">До 80 млн ₸</option>
+              <option value="80to120">80 – 120 млн ₸</option>
+              <option value="over120">Свыше 120 млн ₸</option>
+            </select>
+          </div>
+
+          <!-- Сортировка -->
+          <div>
+            <label for="filter-sort" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Сортировка</label>
+            <select id="filter-sort" class="luxury-select w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-3.5 py-2.5 text-sm text-platinum focus:outline-none transition-colors">
+              <option value="default">По умолчанию</option>
+              <option value="price-asc">Сначала дешевле</option>
+              <option value="price-desc">Сначала дороже</option>
+              <option value="power-desc">По мощности (л.с.)</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Строка статуса фильтров -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mt-5 pt-4 border-t border-borderline">
+          <p class="text-xs sm:text-sm text-silver">
+            Найдено автомобилей: <span id="cars-count" class="text-champagne font-bold">64</span> из <span id="cars-total">64</span>
+          </p>
+          <button id="reset-filters-btn" type="button" class="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider text-silver hover:text-champagne transition-colors cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Сбросить фильтры</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Сетка карточек автомобилей (1 колонка на мобильных, 2 на планшете, 3 на десктопе) -->
+      <div id="cars-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <!-- Карточки рендерятся динамически через JavaScript -->
+      </div>
+
+      <!-- Сообщение при отсутствии результатов -->
+      <div id="empty-state" class="hidden bg-graphite border border-borderline rounded-arch p-12 text-center">
+        <p class="font-display text-2xl font-bold text-platinum mb-2">Автомобили по заданным параметрам не найдены</p>
+        <p class="text-sm text-silver max-w-md mx-auto mb-6">Попробуйте изменить критерии поиска, расширить ценовой диапазон или сбросить текущие фильтры.</p>
+        <button id="empty-reset-btn" type="button" class="bg-champagne hover:bg-champagne-light text-obsidian font-semibold text-xs uppercase tracking-widest px-6 py-3 rounded-arch transition-colors cursor-pointer">
+          Показать все автомобили
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 4. О КОМПАНИИ ==================== -->
+  <section id="about" class="py-20 sm:py-28 bg-graphite border-t border-borderline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <div class="lg:col-span-6 reveal">
+          <div class="relative rounded-arch overflow-hidden border border-borderline">
+            <img
+              src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1100&q=85"
+              alt="Интерьер шоурума NEXUS MOTORS"
+              loading="lazy"
+              class="w-full h-[360px] sm:h-[460px] object-cover"
+              onerror="this.onerror=null;this.src='https://placehold.co/900x600/121317/D4AF37?text=NEXUS+MOTORS+Showroom';"
+            >
+            <div class="absolute inset-0 bg-gradient-to-t from-obsidian/80 via-transparent to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 flex items-center justify-between border-t border-white/15 pt-4">
+              <span class="text-xs uppercase tracking-[0.2em] text-champagne font-semibold">Private Showroom</span>
+              <span class="text-xs text-platinum/80">Алматы • Казахстан</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 reveal">
+          <span class="text-champagne text-xs uppercase tracking-[0.26em] font-semibold">Философия бренда</span>
+          <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-platinum mt-2 mb-6 leading-tight">
+            Искусство владения выдающимися автомобилями
+          </h2>
+          <p class="text-platinum/85 text-base leading-relaxed mb-5">
+            <strong>NEXUS MOTORS</strong> — это закрытый клуб и мультибрендовый автосалон, объединяющий ценителей инженерного совершенства, редких спецификаций и безупречного сервиса.
+          </p>
+          <p class="text-silver text-sm sm:text-base leading-relaxed mb-8">
+            Каждый автомобиль в нашей коллекции проходит многоступенчатую криминалистическую проверку, эндоскопию двигателя, диагностику лакокрасочного покрытия и полную предпродажную детейлинг-подготовку перед передачей новому владельцу.
+          </p>
+
+          <div class="grid grid-cols-2 gap-4 sm:gap-6">
+            <div class="bg-obsidian border border-borderline rounded-arch p-5">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-champagne mb-1">14 дней</p>
+              <p class="text-xs sm:text-sm text-silver">Средний срок индивидуальной поставки авто под заказ из Европы и ОАЭ</p>
+            </div>
+            <div class="bg-obsidian border border-borderline rounded-arch p-5">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-champagne mb-1">VIP Консьерж</p>
+              <p class="text-xs sm:text-sm text-silver">Персональный менеджер сопровождает сделку от подбора до постановки на учёт</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 5. НАШИ ПРЕИМУЩЕСТВА ==================== -->
+  <section id="advantages" class="py-20 sm:py-28 bg-obsidian border-t border-borderline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-14 reveal">
+        <span class="text-champagne text-xs uppercase tracking-[0.26em] font-semibold">Стандарты NEXUS MOTORS</span>
+        <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-platinum mt-2">Почему выбирают нас</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <div class="bg-graphite border border-borderline hover:border-champagne/45 rounded-arch p-7 transition-colors reveal">
+          <div class="w-12 h-12 rounded-arch bg-champagne/10 border border-champagne/30 flex items-center justify-center text-champagne mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-platinum mb-3">Юридическая чистота</h3>
+          <p class="text-sm text-silver leading-relaxed">
+            Полная проверка по международным базам, прозрачная таможенная очистка и гарантия отсутствия обременений.
+          </p>
+        </div>
+
+        <div class="bg-graphite border border-borderline hover:border-champagne/45 rounded-arch p-7 transition-colors reveal">
+          <div class="w-12 h-12 rounded-arch bg-champagne/10 border border-champagne/30 flex items-center justify-center text-champagne mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-platinum mb-3">Инспекция 140+ пунктов</h3>
+          <p class="text-sm text-silver leading-relaxed">
+            Компьютерная диагностика всех электронных блоков, проверка геометрии кузова, подвески и силовых агрегатов.
+          </p>
+        </div>
+
+        <div class="bg-graphite border border-borderline hover:border-champagne/45 rounded-arch p-7 transition-colors reveal">
+          <div class="w-12 h-12 rounded-arch bg-champagne/10 border border-champagne/30 flex items-center justify-center text-champagne mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-platinum mb-3">Закрытые поставки</h3>
+          <p class="text-sm text-silver leading-relaxed">
+            Прямой доступ к лимитированным сериям и редким конфигурациям с заводов Германии, Италии и США.
+          </p>
+        </div>
+
+        <div class="bg-graphite border border-borderline hover:border-champagne/45 rounded-arch p-7 transition-colors reveal">
+          <div class="w-12 h-12 rounded-arch bg-champagne/10 border border-champagne/30 flex items-center justify-center text-champagne mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-platinum mb-3">Детейлинг и Trade-In</h3>
+          <p class="text-sm text-silver leading-relaxed">
+            Оклейка защитной полиуретановой плёнкой, керамическое покрытие и быстрый обмен вашего автомобиля.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 6. ГАЛЕРЕЯ АВТОМОБИЛЕЙ ==================== -->
+  <section id="gallery" class="py-20 sm:py-28 bg-graphite border-t border-borderline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12 reveal">
+        <div>
+          <span class="text-champagne text-xs uppercase tracking-[0.26em] font-semibold">Эстетика деталей</span>
+          <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-platinum mt-2">Галерея шоурума</h2>
+        </div>
+        <p class="text-xs sm:text-sm text-silver max-w-md">
+          Нажмите на любое изображение, чтобы открыть фотографию в полноэкранном режиме.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 reveal">
+        
+        <button type="button" class="gallery-trigger group relative rounded-arch overflow-hidden h-72 border border-borderline focus:outline-none cursor-pointer" data-full="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1500&q=85" data-caption="Porsche 911 Carrera GTS — идеальная развесовка и карбон-керамическая тормозная система">
+          <img src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=800&q=80" alt="Porsche 911 Carrera GTS" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/800x600/121317/D4AF37?text=Porsche+911';">
+          <div class="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+            <span class="text-xs sm:text-sm text-platinum font-medium text-left">Porsche 911 Carrera GTS</span>
+          </div>
+        </button>
+
+        <button type="button" class="gallery-trigger group relative rounded-arch overflow-hidden h-72 border border-borderline focus:outline-none cursor-pointer" data-full="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1500&q=85" data-caption="Lamborghini Huracán EVO — атмосферный V10 мощностью 640 л.с.">
+          <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=800&q=80" alt="Lamborghini Huracan EVO" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/800x600/121317/D4AF37?text=Lamborghini+Huracan';">
+          <div class="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+            <span class="text-xs sm:text-sm text-platinum font-medium text-left">Lamborghini Huracán EVO</span>
+          </div>
+        </button>
+
+        <button type="button" class="gallery-trigger group relative rounded-arch overflow-hidden h-72 border border-borderline focus:outline-none cursor-pointer" data-full="https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=1500&q=85" data-caption="Mercedes-Benz G 63 AMG — легендарный характер в исполнении MANUFAKTUR">
+          <img src="https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=800&q=80" alt="Mercedes-Benz G 63 AMG" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/800x600/121317/D4AF37?text=Mercedes+G63';">
+          <div class="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+            <span class="text-xs sm:text-sm text-platinum font-medium text-left">Mercedes-Benz G 63 AMG</span>
+          </div>
+        </button>
+
+        <button type="button" class="gallery-trigger group relative rounded-arch overflow-hidden h-72 border border-borderline focus:outline-none cursor-pointer" data-full="https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1500&q=85" data-caption="Ferrari 488 GTB — итальянская аэродинамика и 670 л.с. чистого драйва">
+          <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80" alt="Ferrari 488 GTB" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/800x600/121317/D4AF37?text=Ferrari+488';">
+          <div class="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+            <span class="text-xs sm:text-sm text-platinum font-medium text-left">Ferrari 488 GTB</span>
+          </div>
+        </button>
+
+        <button type="button" class="gallery-trigger group relative rounded-arch overflow-hidden h-72 border border-borderline focus:outline-none cursor-pointer" data-full="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1500&q=85" data-caption="BMW M5 Competition — эталонный бизнес-седан с полным приводом M xDrive">
+          <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80" alt="BMW M5 Competition" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/800x600/121317/D4AF37?text=BMW+M5';">
+          <div class="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+            <span class="text-xs sm:text-sm text-platinum font-medium text-left">BMW M5 Competition</span>
+          </div>
+        </button>
+
+        <button type="button" class="gallery-trigger group relative rounded-arch overflow-hidden h-72 border border-borderline focus:outline-none cursor-pointer" data-full="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1500&q=85" data-caption="Audi RS7 Sportback Performance — сочетание агрессивного силуэта и комфорта">
+          <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=800&q=80" alt="Audi RS7 Sportback" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/800x600/121317/D4AF37?text=Audi+RS7';">
+          <div class="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+            <span class="text-xs sm:text-sm text-platinum font-medium text-left">Audi RS7 Sportback Performance</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 7. ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ (FAQ) ==================== -->
+  <section id="faq" class="py-20 sm:py-28 bg-obsidian border-t border-borderline">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center mb-12 reveal">
+        <span class="text-champagne text-xs uppercase tracking-[0.26em] font-semibold">Ответы на частые вопросы</span>
+        <h2 class="font-display text-3xl sm:text-4xl font-bold text-platinum mt-2">Часто задаваемые вопросы</h2>
+      </div>
+
+      <div class="space-y-4 reveal" id="faq-accordion">
+        
+        <div class="bg-graphite border border-borderline rounded-arch overflow-hidden">
+          <button type="button" class="faq-btn w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left cursor-pointer">
+            <span class="font-semibold text-sm sm:text-base text-platinum">Как происходит техническая и юридическая проверка автомобилей?</span>
+            <svg class="faq-icon w-5 h-5 text-champagne shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="faq-content px-5 sm:px-6">
+            <p class="text-sm text-silver leading-relaxed pb-6 border-t border-borderline pt-4">
+              Каждый автомобиль проходит диагностику по 140 параметрам: толщинометрию кузова, эндоскопию цилиндров, проверку истории обслуживания у официальных дилеров и криминалистическую экспертизу документов.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-graphite border border-borderline rounded-arch overflow-hidden">
+          <button type="button" class="faq-btn w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left cursor-pointer">
+            <span class="font-semibold text-sm sm:text-base text-platinum">Возможен ли обмен моего текущего автомобиля по программе Trade-In?</span>
+            <svg class="faq-icon w-5 h-5 text-champagne shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="faq-content px-5 sm:px-6">
+            <p class="text-sm text-silver leading-relaxed pb-6 border-t border-borderline pt-4">
+              Да, мы принимаем автомобили премиум-класса в зачёт стоимости приобретаемого авто. Оценка занимает не более 40 минут в нашем шоуруме и проводится по рыночной стоимости.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-graphite border border-borderline rounded-arch overflow-hidden">
+          <button type="button" class="faq-btn w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left cursor-pointer">
+            <span class="font-semibold text-sm sm:text-base text-platinum">Осуществляете ли вы доставку автомобилей в другие города Казахстана?</span>
+            <svg class="faq-icon w-5 h-5 text-champagne shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="faq-content px-5 sm:px-6">
+            <p class="text-sm text-silver leading-relaxed pb-6 border-t border-borderline pt-4">
+              Мы организуем бережную транспортировку крытым автовозом с полным страхованием груза в Астану, Шымкент, Атырау, Актау и любой другой город Республики Казахстан.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-graphite border border-borderline rounded-arch overflow-hidden">
+          <button type="button" class="faq-btn w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left cursor-pointer">
+            <span class="font-semibold text-sm sm:text-base text-platinum">Можно ли заказать редкую комплектацию из Европы или ОАЭ?</span>
+            <svg class="faq-icon w-5 h-5 text-champagne shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="faq-content px-5 sm:px-6">
+            <p class="text-sm text-silver leading-relaxed pb-6 border-t border-borderline pt-4">
+              Безусловно. Наши специалисты подберут автомобиль по вашим индивидуальным требованиям (цвет кузова, отделка салона, пакеты опций), проведут выездную инспекцию и доставят автомобиль под ключ.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-graphite border border-borderline rounded-arch overflow-hidden">
+          <button type="button" class="faq-btn w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left cursor-pointer">
+            <span class="font-semibold text-sm sm:text-base text-platinum">Какие варианты оплаты и финансирования доступны?</span>
+            <svg class="faq-icon w-5 h-5 text-champagne shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="faq-content px-5 sm:px-6">
+            <p class="text-sm text-silver leading-relaxed pb-6 border-t border-borderline pt-4">
+              Доступен безналичный расчёт для физических и юридических лиц, лизинговые программы для бизнеса, а также индивидуальные условия автокредитования от банков-партнёров.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 8. КОНТАКТЫ И ФОРМА ЗАЯВКИ ==================== -->
+  <section id="contacts" class="py-20 sm:py-28 bg-graphite border-t border-borderline">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        
+        <!-- Контактная информация (Демонстрационная) -->
+        <div class="lg:col-span-5 reveal">
+          <span class="text-champagne text-xs uppercase tracking-[0.26em] font-semibold">Контакты шоурума</span>
+          <h2 class="font-display text-3xl sm:text-4xl font-bold text-platinum mt-2 mb-4">Персональная консультация</h2>
+          <p class="text-sm text-silver leading-relaxed mb-8">
+            Посетите наш шоурум для личного знакомства с автомобилями или оставьте заявку на подбор. Контактные данные ниже являются демонстрационными.
+          </p>
+
+          <div class="space-y-4">
+            <div class="bg-obsidian border border-borderline rounded-arch p-5 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-arch bg-champagne/10 text-champagne flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-[11px] uppercase tracking-wider text-champagne font-semibold">Демонстрационный адрес</p>
+                <p class="text-sm text-platinum font-medium mt-1">г. Алматы, пр. Аль-Фараби, 77/8 (Демо-адрес)</p>
+              </div>
+            </div>
+
+            <div class="bg-obsidian border border-borderline rounded-arch p-5 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-arch bg-champagne/10 text-champagne flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-[11px] uppercase tracking-wider text-champagne font-semibold">График работы</p>
+                <p class="text-sm text-platinum font-medium mt-1">Ежедневно: 10:00 – 21:00 (без выходных)</p>
+              </div>
+            </div>
+
+            <div class="bg-obsidian border border-borderline rounded-arch p-5 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-arch bg-champagne/10 text-champagne flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-[11px] uppercase tracking-wider text-champagne font-semibold">Демо-линия консьерж-сервиса</p>
+                <p class="text-sm text-platinum font-medium mt-1">+7 (700) 000-00-00 (демо-телефон)</p>
+                <p class="text-xs text-silver mt-0.5">concierge@nexus-motors.example</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Форма обратной связи в секции контактов -->
+        <div class="lg:col-span-7 reveal">
+          <div class="bg-obsidian border border-borderline rounded-arch p-6 sm:p-10">
+            <h3 class="font-display text-2xl sm:text-3xl font-bold text-platinum mb-2">Оставить заявку</h3>
+            <p class="text-xs sm:text-sm text-silver mb-6">
+              Заполните форму для демонстрации работы интерфейса. Реальная заявка дилеру не отправляется.
+            </p>
+
+            <form id="footer-request-form" novalidate class="space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label for="f-name" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Ваше имя *</label>
+                  <input type="text" id="f-name" placeholder="Введите ваше имя" required class="w-full bg-graphite border border-borderline focus:border-champagne rounded-arch px-4 py-3 text-sm text-platinum placeholder-silver/50 focus:outline-none transition-colors">
+                  <p class="f-err-name hidden text-xs text-red-400 mt-1">Укажите ваше имя (минимум 2 символа)</p>
+                </div>
+
+                <div>
+                  <label for="f-phone" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Номер телефона *</label>
+                  <input type="tel" id="f-phone" placeholder="+7 (700) 000-00-00" required class="phone-mask w-full bg-graphite border border-borderline focus:border-champagne rounded-arch px-4 py-3 text-sm text-platinum placeholder-silver/50 focus:outline-none transition-colors">
+                  <p class="f-err-phone hidden text-xs text-red-400 mt-1">Введите корректный номер телефона</p>
+                </div>
+              </div>
+
+              <div>
+                <label for="f-car" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Интересующий автомобиль</label>
+                <select id="f-car" class="car-select-list luxury-select w-full bg-graphite border border-borderline focus:border-champagne rounded-arch px-4 py-3 text-sm text-platinum focus:outline-none transition-colors">
+                  <!-- Заполняется через JS -->
+                </select>
+              </div>
+
+              <div>
+                <label for="f-comment" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-2">Комментарий</label>
+                <textarea id="f-comment" rows="3" placeholder="Удобное время для связи, вопросы по комплектации или Trade-In..." class="w-full bg-graphite border border-borderline focus:border-champagne rounded-arch px-4 py-3 text-sm text-platinum placeholder-silver/50 focus:outline-none transition-colors resize-none"></textarea>
+              </div>
+
+              <button type="submit" class="w-full sm:w-auto bg-champagne hover:bg-champagne-light text-obsidian font-bold text-xs uppercase tracking-[0.14em] px-8 py-4 rounded-arch transition-colors cursor-pointer">
+                Отправить заявку (Демо)
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 9. ФУТЕР (FOOTER) ==================== -->
+  <footer class="bg-obsidian border-t border-borderline py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-borderline">
+        <a href="#hero" class="font-display text-lg font-bold tracking-[0.22em] text-platinum">NEXUS MOTORS</a>
+        <div class="flex flex-wrap items-center justify-center gap-6 text-xs uppercase tracking-wider text-silver">
+          <a href="#catalog" class="hover:text-champagne transition-colors">Каталог</a>
+          <a href="#about" class="hover:text-champagne transition-colors">О компании</a>
+          <a href="#advantages" class="hover:text-champagne transition-colors">Преимущества</a>
+          <a href="#gallery" class="hover:text-champagne transition-colors">Галерея</a>
+          <a href="#faq" class="hover:text-champagne transition-colors">FAQ</a>
+          <a href="#contacts" class="hover:text-champagne transition-colors">Контакты</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs text-silver text-center sm:text-left">
+        <p>© 2026 NEXUS MOTORS. Демонстрационный коммерческий проект для портфолио веб-разработчика.</p>
+        <p class="text-silver/70">Все цены, характеристики, адреса и телефоны носят демонстрационный характер.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== 10. МОДАЛЬНОЕ ОКНО ДЕТАЛЬНОГО ПРОСМОТРА АВТОМОБИЛЯ ==================== -->
+  <div id="detail-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-graphite border border-borderline rounded-arch max-w-5xl w-full my-auto overflow-hidden shadow-2xl relative">
+      
+      <!-- Верхняя панель модального окна -->
+      <div class="flex items-center justify-between px-5 sm:px-8 py-4 border-b border-borderline bg-obsidian">
+        <div class="flex items-center gap-3">
+          <span id="modal-car-badge" class="px-2.5 py-1 rounded-arch text-[11px] uppercase tracking-wider font-semibold bg-champagne/15 text-champagne border border-champagne/30">Седан • 2024</span>
+          <span class="text-[11px] text-silver uppercase tracking-wider">Демо-карточка</span>
+        </div>
+        <button id="close-detail-btn" type="button" aria-label="Закрыть окно" class="p-2 rounded-arch bg-graphite border border-borderline text-platinum hover:border-champagne hover:text-champagne transition-colors cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Контент карточки автомобиля -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 p-5 sm:p-8 max-h-[84vh] overflow-y-auto">
+        
+        <!-- Левая часть: Основное фото и миниатюры -->
+        <div class="lg:col-span-7 space-y-3">
+          <div class="rounded-arch overflow-hidden border border-borderline bg-obsidian aspect-[16/10]">
+            <img id="modal-main-img" src="" alt="Фото автомобиля" class="w-full h-full object-cover">
+          </div>
+          <div id="modal-thumbs" class="grid grid-cols-3 gap-3">
+            <!-- Миниатюры 3 ракурсов рендерятся скриптом -->
+          </div>
+        </div>
+
+        <!-- Правая часть: Характеристики, описание и цена -->
+        <div class="lg:col-span-5 flex flex-col justify-between">
+          <div>
+            <h3 id="modal-car-title" class="font-display text-2xl sm:text-3xl font-bold text-platinum leading-tight mb-3">BMW M5 Competition</h3>
+            <p id="modal-car-desc" class="text-sm text-silver leading-relaxed mb-6">Описание комплектации...</p>
+
+            <!-- Таблица полных характеристик -->
+            <div class="bg-obsidian border border-borderline rounded-arch divide-y divide-borderline text-xs sm:text-sm mb-6">
+              <div class="flex justify-between px-4 py-2.5">
+                <span class="text-silver">Год выпуска</span>
+                <span id="spec-year" class="text-platinum font-semibold">2024</span>
+              </div>
+              <div class="flex justify-between px-4 py-2.5">
+                <span class="text-silver">Двигатель</span>
+                <span id="spec-engine" class="text-platinum font-semibold text-right">4.4 л V8 Twin-Turbo</span>
+              </div>
+              <div class="flex justify-between px-4 py-2.5">
+                <span class="text-silver">Мощность</span>
+                <span id="spec-power" class="text-champagne font-semibold">625 л.с.</span>
+              </div>
+              <div class="flex justify-between px-4 py-2.5">
+                <span class="text-silver">Разгон 0–100 км/ч</span>
+                <span id="spec-accel" class="text-platinum font-semibold">3.3 сек</span>
+              </div>
+              <div class="flex justify-between px-4 py-2.5">
+                <span class="text-silver">Привод / КПП</span>
+                <span id="spec-drive" class="text-platinum font-semibold text-right">Полный / АКПП</span>
+              </div>
+              <div class="flex justify-between px-4 py-2.5">
+                <span class="text-silver">Пробег (демо)</span>
+                <span id="spec-mileage" class="text-platinum font-semibold">1 200 км</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Блок стоимости и кнопки заявки -->
+          <div class="pt-4 border-t border-borderline">
+            <div class="flex items-baseline justify-between mb-4">
+              <span class="text-xs uppercase tracking-wider text-silver">Демо-стоимость:</span>
+              <span id="modal-car-price" class="font-display text-2xl sm:text-3xl font-bold text-champagne">78 500 000 ₸</span>
+            </div>
+            <button id="modal-request-btn" type="button" class="w-full bg-champagne hover:bg-champagne-light text-obsidian font-bold text-xs sm:text-sm uppercase tracking-[0.14em] py-4 rounded-arch transition-colors cursor-pointer">
+              Оставить заявку
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 11. МОДАЛЬНОЕ ОКНО ФОРМЫ ЗАЯВКИ ==================== -->
+  <div id="request-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-graphite border border-champagne/30 rounded-arch max-w-lg w-full p-6 sm:p-8 shadow-2xl relative my-auto">
+      <button id="close-request-btn" type="button" aria-label="Закрыть форму" class="absolute top-4 right-4 p-2 rounded-arch bg-obsidian border border-borderline text-platinum hover:border-champagne hover:text-champagne transition-colors cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <span class="text-champagne text-[11px] uppercase tracking-[0.22em] font-semibold">Персональный менеджер</span>
+      <h3 class="font-display text-2xl sm:text-3xl font-bold text-platinum mt-1 mb-2">Оставить заявку</h3>
+      <p class="text-xs text-silver leading-relaxed mb-6">
+        Демонстрационная форма портфолио: реальная отправка заявки дилеру не выполняется.
+      </p>
+
+      <form id="modal-request-form" novalidate class="space-y-4">
+        <div>
+          <label for="m-name" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-1.5">Ваше имя *</label>
+          <input type="text" id="m-name" placeholder="Например, Данияр" required class="w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-4 py-3 text-sm text-platinum placeholder-silver/50 focus:outline-none">
+          <p id="m-err-name" class="hidden text-xs text-red-400 mt-1">Пожалуйста, введите ваше имя (минимум 2 символа)</p>
+        </div>
+
+        <div>
+          <label for="m-phone" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-1.5">Номер телефона *</label>
+          <input type="tel" id="m-phone" placeholder="+7 (700) 000-00-00" required class="phone-mask w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-4 py-3 text-sm text-platinum placeholder-silver/50 focus:outline-none">
+          <p id="m-err-phone" class="hidden text-xs text-red-400 mt-1">Укажите корректный номер телефона</p>
+        </div>
+
+        <div>
+          <label for="m-car" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-1.5">Выбранный автомобиль</label>
+          <select id="m-car" class="car-select-list luxury-select w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-4 py-3 text-sm text-platinum focus:outline-none">
+            <!-- Заполняется через JS -->
+          </select>
+        </div>
+
+        <div>
+          <label for="m-comment" class="block text-[11px] uppercase tracking-wider text-silver font-semibold mb-1.5">Комментарий</label>
+          <textarea id="m-comment" rows="3" placeholder="Дополнительные пожелания или вопросы..." class="w-full bg-obsidian border border-borderline focus:border-champagne rounded-arch px-4 py-3 text-sm text-platinum placeholder-silver/50 focus:outline-none resize-none"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-champagne hover:bg-champagne-light text-obsidian font-bold text-xs uppercase tracking-[0.14em] py-4 rounded-arch transition-colors cursor-pointer">
+          Отправить заявку (Демо)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== 12. МОДАЛЬНОЕ ОКНО ГАЛЕРЕИ (LIGHTBOX) ==================== -->
+  <div id="lightbox" class="fixed inset-0 bg-black/92 backdrop-blur-md z-50 hidden items-center justify-center p-4 sm:p-8">
+    <button id="close-lightbox" type="button" aria-label="Закрыть просмотр" class="absolute top-5 right-5 p-3 rounded-arch bg-graphite border border-borderline text-platinum hover:border-champagne hover:text-champagne transition-colors cursor-pointer">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="max-w-5xl w-full flex flex-col items-center">
+      <img id="lightbox-image" src="" alt="Просмотр автомобиля" class="max-h-[78vh] w-auto rounded-arch border border-champagne/30 object-contain">
+      <p id="lightbox-text" class="text-platinum text-sm sm:text-base mt-4 text-center"></p>
+    </div>
+  </div>
+
+  <!-- ==================== 13. КОНТЕЙНЕР УВЕДОМЛЕНИЙ (TOAST) ==================== -->
+  <div id="toast-box" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-[calc(100%-2.5rem)] pointer-events-none"></div>
+
+  <!-- ==================== JAVASCRIPT ЛОГИКА ==================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // 1. ДАННЫЕ 64 ПРЕМИАЛЬНЫХ АВТОМОБИЛЕЙ (12 исходных + 52 новых, демонстрационные характеристики и цены)
+      const CARS_DATA = [
+        {
+          id: 1,
+          brand: 'BMW',
+          model: 'BMW M5 Competition',
+          body: 'Седан',
+          year: 2024,
+          engine: '4.4 л V8 Twin-Turbo (Бензин)',
+          power: 625,
+          mileage: '1 200 км',
+          accel: '3.3 сек',
+          drive: 'Полный M xDrive / 8-АКПП',
+          price: 78500000,
+          description: 'Эталонный спортивный бизнес-седан в оттенке Frozen Deep Grey. Оснащён карбон-керамическими тормозами M, выхлопной системой M Sport, лазерной оптикой и отделкой салона кожей Merino.',
+          images: [
+            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1556189250-72ba954cfc2b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 2,
+          brand: 'Mercedes-Benz',
+          model: 'Mercedes-Benz S 580 Maybach',
+          body: 'Седан',
+          year: 2024,
+          engine: '4.0 л V8 Mild-Hybrid (Гибрид)',
+          power: 503,
+          mileage: '0 км',
+          accel: '4.8 сек',
+          drive: 'Полный 4MATIC / 9G-TRONIC',
+          price: 96000000,
+          description: 'Флагманский представительский седан с удлинённой колёсной базой, задними креслами Executive с массажем и оттоманкой, акустикой Burmester High-End 4D и пневмоподвеской E-ACTIVE BODY CONTROL.',
+          images: [
+            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 3,
+          brand: 'Porsche',
+          model: 'Porsche 911 Carrera GTS',
+          body: 'Купе',
+          year: 2024,
+          engine: '3.0 л Оппозитный 6-цил. (Бензин)',
+          power: 480,
+          mileage: '450 км',
+          accel: '3.4 сек',
+          drive: 'Задний / 8-PDK',
+          price: 112000000,
+          description: 'Легендарное купе в пакете SportDesign с подвеской PASM, подруливающей задней осью, коваными дисками с центральной гайкой и отделкой интерьера Race-Tex.',
+          images: [
+            'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1580274455191-1c62238fa333?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 4,
+          brand: 'Toyota',
+          model: 'Toyota Land Cruiser 300 GR Sport',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '3.5 л V6 Twin-Turbo (Бензин)',
+          power: 415,
+          mileage: '0 км',
+          accel: '6.7 сек',
+          drive: 'Полный 4WD / 10-АКПП',
+          price: 64900000,
+          description: 'Максимальная внедорожная версия GR Sport с тремя блокировками дифференциалов, адаптивной системой стабилизации E-KDSS, камерами кругового обзора и чёрно-красным кожаным салоном.',
+          images: [
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 5,
+          brand: 'Audi',
+          model: 'Audi RS7 Sportback Performance',
+          body: 'Лифтбек',
+          year: 2024,
+          engine: '4.0 л V8 TFSI (Бензин)',
+          power: 630,
+          mileage: '2 100 км',
+          accel: '3.4 сек',
+          drive: 'Полный quattro / 8-tiptronic',
+          price: 84000000,
+          description: 'Версия Performance с увеличенными турбонагнетателями, матричными лазерными фарами HD Matrix LED, спортивным дифференциалом quattro и аудиосистемой Bang & Olufsen Advanced.',
+          images: [
+            'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 6,
+          brand: 'Lamborghini',
+          model: 'Lamborghini Huracán EVO',
+          body: 'Суперкар',
+          year: 2023,
+          engine: '5.2 л V10 Атмосферный (Бензин)',
+          power: 640,
+          mileage: '3 400 км',
+          accel: '2.9 сек',
+          drive: 'Полный AWD / 7-LDF',
+          price: 168000000,
+          description: 'Среднемоторный итальянский суперкар с системой прогнозирующей динамики LDVI, активной аэродинамикой, кованым карбоном в отделке кокпита и подъёмником передней оси.',
+          images: [
+            'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 7,
+          brand: 'Ferrari',
+          model: 'Ferrari 488 GTB',
+          body: 'Суперкар',
+          year: 2022,
+          engine: '3.9 л V8 Twin-Turbo (Бензин)',
+          power: 670,
+          mileage: '5 800 км',
+          accel: '3.0 сек',
+          drive: 'Задний / 7-F1 DCT',
+          price: 154000000,
+          description: 'Культовое берлинетта-купе из Маранелло в цвете Rosso Corsa. Оснащено гоночными карбоновыми ковшами Daytona, телеметрией Ferrari и системой контроля боковых скольжений SSC2.',
+          images: [
+            'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 8,
+          brand: 'Range Rover',
+          model: 'Range Rover Sport Autobiography',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '4.4 л V8 Twin-Turbo (Бензин)',
+          power: 530,
+          mileage: '0 км',
+          accel: '4.5 сек',
+          drive: 'Полный AWD / 8-АКПП',
+          price: 89500000,
+          description: 'Британский флагман в исполнении Autobiography с полноуправляемым шасси, системой активного подавления кренов Dynamic Response Pro, доводчиками дверей и кожей Semi-Aniline.',
+          images: [
+            'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 9,
+          brand: 'Tesla',
+          model: 'Tesla Model S Plaid',
+          body: 'Лифтбек',
+          year: 2024,
+          engine: 'Три электромотора 100 кВт·ч (Электро)',
+          power: 1020,
+          mileage: '150 км',
+          accel: '2.1 сек',
+          drive: 'Полный Tri-Motor AWD / Редуктор',
+          price: 62000000,
+          description: 'Один из самых динамичных серийных автомобилей в мире. Запас хода до 600 км, карбоновые роторы электродвигателей, автопилот Full Self-Driving и панорамная крыша.',
+          images: [
+            'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1536700503339-1e4b06520771?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 10,
+          brand: 'Mercedes-Benz',
+          model: 'Mercedes-Benz G 63 AMG',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '4.0 л V8 Biturbo (Бензин)',
+          power: 585,
+          mileage: '0 км',
+          accel: '4.5 сек',
+          drive: 'Полный 4MATIC / 9G-TRONIC',
+          price: 138000000,
+          description: 'Культовый внедорожник в пакете AMG Night Package с коваными 22-дюймовыми дисками, тремя блокировками, отделкой салона ромбовидной кожей Nappa и карбоновым рулём.',
+          images: [
+            'https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 11,
+          brand: 'BMW',
+          model: 'BMW X7 M60i xDrive',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '4.4 л V8 Twin-Turbo (Бензин)',
+          power: 530,
+          mileage: '800 км',
+          accel: '4.7 сек',
+          drive: 'Полный xDrive / 8-АКПП',
+          price: 76000000,
+          description: 'Шестиместный флагманский SUV с капитанскими креслами второго ряда, панорамной крышей Sky Lounge, хрустальной отделкой CraftedClarity и аудиосистемой Bowers & Wilkins.',
+          images: [
+            'https://images.unsplash.com/photo-1556189250-72ba954cfc2b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 12,
+          brand: 'Porsche',
+          model: 'Porsche Cayenne Turbo GT',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: '4.0 л V8 Twin-Turbo (Бензин)',
+          power: 659,
+          mileage: '300 км',
+          accel: '3.3 сек',
+          drive: 'Полный PTM / 8-Tiptronic S',
+          price: 108500000,
+          description: 'Рекордсмен Нюрбургринга среди кроссоверов. Карбоновая крыша, титановая выхлопная система, керамические тормоза PCCB и спортивная подвеска с заниженным центром тяжести.',
+          images: [
+            'https://images.unsplash.com/photo-1580274455191-1c62238fa333?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        // --- 52 НОВЫХ АВТОМОБИЛЯ ПО ВСЕМ 20 МАРКАМ ---
+        {
+          id: 13,
+          brand: 'BMW',
+          model: 'BMW M4 Competition xDrive',
+          body: 'Купе',
+          year: 2025,
+          engine: '3.0 л R6 Twin-Turbo (Бензин)',
+          power: 530,
+          mileage: '0 км',
+          accel: '3.5 сек',
+          drive: 'Полный M xDrive / 8-АКПП',
+          price: 68500000,
+          description: 'Двухдверное спорткупе с карбоновой крышей, ковшами M Carbon, телеметрией M Drive Professional и коваными разноширокими дисками.',
+          images: [
+            'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1556189250-72ba954cfc2b?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 14,
+          brand: 'BMW',
+          model: 'BMW M8 Gran Coupé Competition',
+          body: 'Седан',
+          year: 2024,
+          engine: '4.4 л V8 Twin-Turbo (Бензин)',
+          power: 625,
+          mileage: '1 900 км',
+          accel: '3.2 сек',
+          drive: 'Полный M xDrive / 8-АКПП',
+          price: 92000000,
+          description: 'Четырёхдверное флагманское купе с эксклюзивной отделкой BMW Individual, лазерными фарами и аудиосистемой Bowers & Wilkins Diamond.',
+          images: [
+            'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 15,
+          brand: 'BMW',
+          model: 'BMW i7 xDrive60 M Sport',
+          body: 'Седан',
+          year: 2025,
+          engine: 'Два электромотора 101.7 кВт·ч (Электро)',
+          power: 544,
+          mileage: '200 км',
+          accel: '4.7 сек',
+          drive: 'Полный xDrive / Редуктор',
+          price: 83000000,
+          description: 'Электрический флагман 7-й серии с 31-дюймовым экраном Theatre Screen для задних пассажиров, автоматическими дверями и хрустальной оптикой Iconic Glow.',
+          images: [
+            'https://images.unsplash.com/photo-1635773107960-c544880147f9?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1556189250-72ba954cfc2b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 16,
+          brand: 'BMW',
+          model: 'BMW X5 M Competition',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: '4.4 л V8 Twin-Turbo (Бензин)',
+          power: 625,
+          mileage: '1 400 км',
+          accel: '3.8 сек',
+          drive: 'Полный M xDrive / 8-АКПП',
+          price: 81500000,
+          description: 'Высокопроизводительный спортивный кроссовер с активной стабилизацией, панорамной крышей, вентиляцией и массажем мультиконтурных кресел.',
+          images: [
+            'https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1556189250-72ba954cfc2b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 17,
+          brand: 'Mercedes-Benz',
+          model: 'Mercedes-AMG GT 63 S E Performance',
+          body: 'Лифтбек',
+          year: 2025,
+          engine: '4.0 л V8 + Электромотор (Гибрид)',
+          power: 843,
+          mileage: '0 км',
+          accel: '2.9 сек',
+          drive: 'Полный 4MATIC+ / 9-АКПП',
+          price: 129000000,
+          description: 'Самый мощный серийный AMG с технологиями Формулы-1, карбон-керамическими тормозами, полноуправляемым шасси и карбоновым аэродинамическим пакетом.',
+          images: [
+            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80&sig=17',
+            'https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 18,
+          brand: 'Mercedes-Benz',
+          model: 'Mercedes-Benz EQS 580 4MATIC',
+          body: 'Лифтбек',
+          year: 2024,
+          engine: 'Два электромотора 108.4 кВт·ч (Электро)',
+          power: 523,
+          mileage: '600 км',
+          accel: '4.3 сек',
+          drive: 'Полный 4MATIC / Редуктор',
+          price: 74500000,
+          description: 'Флагманский электрический лифтбек с сплошным дисплеем MBUX Hyperscreen во всю ширину панели, пневмоподвеской AIRMATIC и запасом хода до 670 км.',
+          images: [
+            'https://images.unsplash.com/photo-1622185135505-2d795003994a?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 19,
+          brand: 'Mercedes-Benz',
+          model: 'Mercedes-AMG GLE 63 S Coupé',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: '4.0 л V8 Biturbo EQ Boost (Гибрид)',
+          power: 612,
+          mileage: '1 100 км',
+          accel: '3.8 сек',
+          drive: 'Полный 4MATIC+ / 9-АКПП',
+          price: 87000000,
+          description: 'Динамичный купе-кроссовер в матовом окрасе Selenite Grey Magno, оснащённый активной подвеской AMG ACTIVE RIDE CONTROL и спортивным выхлопом.',
+          images: [
+            'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 20,
+          brand: 'Mercedes-Benz',
+          model: 'Mercedes-AMG SL 63 Roadster',
+          body: 'Родстер',
+          year: 2024,
+          engine: '4.0 л V8 Biturbo (Бензин)',
+          power: 585,
+          mileage: '700 км',
+          accel: '3.6 сек',
+          drive: 'Полный 4MATIC+ / 9-АКПП',
+          price: 109000000,
+          description: 'Роскошный родстер с посадочной формулой 2+2, мягкой крышей, системой обогрева шеи AIRSCARF и подруливающей задней осью.',
+          images: [
+            'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 21,
+          brand: 'Audi',
+          model: 'Audi R8 V10 Performance Quattro',
+          body: 'Суперкар',
+          year: 2023,
+          engine: '5.2 л V10 FSI Атмосферный (Бензин)',
+          power: 620,
+          mileage: '2 800 км',
+          accel: '3.1 сек',
+          drive: 'Полный quattro / 7-S tronic',
+          price: 134000000,
+          description: 'Финальная серия легендарного среднемоторного суперкара Audi с карбоновыми боковыми накладками, лазерным светом и ковшами R8 из кожи Nappa.',
+          images: [
+            'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 22,
+          brand: 'Audi',
+          model: 'Audi RS6 Avant Performance',
+          body: 'Универсал',
+          year: 2025,
+          engine: '4.0 л V8 TFSI (Бензин)',
+          power: 630,
+          mileage: '0 км',
+          accel: '3.4 сек',
+          drive: 'Полный quattro / 8-tiptronic',
+          price: 88000000,
+          description: 'Культовый заряженный универсал в цвете Nardo Grey с коваными 22-дюймовыми колёсами, подвеской RS Dynamic Package Plus и карбоновой отделкой.',
+          images: [
+            'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 23,
+          brand: 'Audi',
+          model: 'Audi RS e-tron GT',
+          body: 'Седан',
+          year: 2024,
+          engine: 'Два электромотора 93.4 кВт·ч (Электро)',
+          power: 646,
+          mileage: '950 км',
+          accel: '3.3 сек',
+          drive: 'Полный e-quattro / 2-АКПП',
+          price: 75000000,
+          description: 'Электрический гран-турер с 800-вольтовой архитектурой, карбоновой крышей, пневмоподвеской и фирменным акустическим сопровождением e-tron Sport Sound.',
+          images: [
+            'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 24,
+          brand: 'Audi',
+          model: 'Audi RS Q8 TFSI Quattro',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: '4.0 л V8 Twin-Turbo (Бензин)',
+          power: 600,
+          mileage: '1 600 км',
+          accel: '3.8 сек',
+          drive: 'Полный quattro / 8-tiptronic',
+          price: 82500000,
+          description: 'Флагманский спортивный SUV из Ингольштадта с активной электромеханической стабилизацией кренов, доводчиками дверей и проекционным дисплеем.',
+          images: [
+            'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 25,
+          brand: 'Porsche',
+          model: 'Porsche Taycan Turbo S',
+          body: 'Седан',
+          year: 2025,
+          engine: 'Два электромотора 105 кВт·ч (Электро)',
+          power: 952,
+          mileage: '0 км',
+          accel: '2.4 сек',
+          drive: 'Полный AWD / 2-АКПП',
+          price: 118000000,
+          description: 'Обновлённый электрический спортседан с функцией Push-to-Pass, керамическими тормозами PCCB, подвеской Porsche Active Ride и отделкой Race-Tex.',
+          images: [
+            'https://images.unsplash.com/photo-1619682817481-e994891cd1f5?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1580274455191-1c62238fa333?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 26,
+          brand: 'Porsche',
+          model: 'Porsche Panamera Turbo E-Hybrid',
+          body: 'Лифтбек',
+          year: 2025,
+          engine: '4.0 л V8 + Электромотор (Гибрид)',
+          power: 680,
+          mileage: '120 км',
+          accel: '3.2 сек',
+          drive: 'Полный AWD / 8-PDK',
+          price: 116500000,
+          description: 'Бизнес-гран-турер нового поколения с акцентами цвета Turbonite, матричными фарами HD-Matrix LED и аудиосистемой Burmester 3D High-End.',
+          images: [
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80&sig=26',
+            'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1580274455191-1c62238fa333?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 27,
+          brand: 'Porsche',
+          model: 'Porsche 911 GT3 RS Weissach',
+          body: 'Суперкар',
+          year: 2024,
+          engine: '4.0 л Оппозитный Атмосферный (Бензин)',
+          power: 525,
+          mileage: '250 км',
+          accel: '3.2 сек',
+          drive: 'Задний / 7-PDK',
+          price: 215000000,
+          description: 'Трековый болид, допущенный на дороги общего пользования. Система DRS, пакет Weissach с карбоновым каркасом безопасности и магниевыми дисками.',
+          images: [
+            'https://images.unsplash.com/photo-1597687210367-a4915552d886?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 28,
+          brand: 'Porsche',
+          model: 'Porsche Macan GTS',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: '2.9 л V6 Twin-Turbo (Бензин)',
+          power: 440,
+          mileage: '1 300 км',
+          accel: '4.3 сек',
+          drive: 'Полный PTM / 7-PDK',
+          price: 54500000,
+          description: 'Самый драйверский компактный кроссовер класса с заниженной спортивной пневмоподвеской, пакетом Sport Chrono и 21-дюймовыми дисками RS Spyder.',
+          images: [
+            'https://images.unsplash.com/photo-1580274455191-1c62238fa333?auto=format&fit=crop&w=1200&q=80&sig=28',
+            'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 29,
+          brand: 'Lamborghini',
+          model: 'Lamborghini Revuelto V12 HPEV',
+          body: 'Гиперкар',
+          year: 2025,
+          engine: '6.5 л V12 + 3 электромотора (Гибрид)',
+          power: 1015,
+          mileage: '0 км',
+          accel: '2.5 сек',
+          drive: 'Полный e-4WD / 8-DCT',
+          price: 365000000,
+          description: 'Флагманский гибридный гиперкар из Сант-Агата-Болоньезе. Карбоновый монокок, 9500 об/мин атмосферного V12 и максимальная скорость свыше 350 км/ч.',
+          images: [
+            'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 30,
+          brand: 'Lamborghini',
+          model: 'Lamborghini Urus Performante',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: '4.0 л V8 Twin-Turbo (Бензин)',
+          power: 666,
+          mileage: '900 км',
+          accel: '3.3 сек',
+          drive: 'Полный AWD / 8-АКПП',
+          price: 179000000,
+          description: 'Облегчённая трековая версия супер-кроссовера с титановым выхлопом Akrapovič, карбоновым капотом и режимом езды RALLY.',
+          images: [
+            'https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 31,
+          brand: 'Lamborghini',
+          model: 'Lamborghini Aventador SVJ',
+          body: 'Гиперкар',
+          year: 2022,
+          engine: '6.5 л V12 Атмосферный (Бензин)',
+          power: 770,
+          mileage: '1 850 км',
+          accel: '2.8 сек',
+          drive: 'Полный AWD / 7-ISR',
+          price: 340000000,
+          description: 'Коллекционный гиперкар лимитированной серии (1 из 900) с активной аэродинамикой ALA 2.0 и центральным креплением колёс.',
+          images: [
+            'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 32,
+          brand: 'Ferrari',
+          model: 'Ferrari SF90 Stradale Assetto Fiorano',
+          body: 'Гиперкар',
+          year: 2024,
+          engine: '4.0 л V8 + 3 электромотора (Гибрид)',
+          power: 1000,
+          mileage: '400 км',
+          accel: '2.5 сек',
+          drive: 'Полный e-4WD / 8-F1 DCT',
+          price: 325000000,
+          description: 'Первый серийный подключаемый гибрид-гиперкар Ferrari мощностью 1000 л.с. с гоночным пакетом Assetto Fiorano и амортизаторами Multimatic.',
+          images: [
+            'https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 33,
+          brand: 'Ferrari',
+          model: 'Ferrari Roma V8',
+          body: 'Купе',
+          year: 2024,
+          engine: '3.9 л V8 Twin-Turbo (Бензин)',
+          power: 620,
+          mileage: '1 100 км',
+          accel: '3.4 сек',
+          drive: 'Задний / 8-F1 DCT',
+          price: 148000000,
+          description: 'Элегантное купе класса гран-туризмо в духе «La Nuova Dolce Vita» с активным задним антикрылом, пассажирским дисплеем и кожей Poltrona Frau.',
+          images: [
+            'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 34,
+          brand: 'Ferrari',
+          model: 'Ferrari Purosangue V12',
+          body: 'Кроссовер',
+          year: 2025,
+          engine: '6.5 л V12 Атмосферный (Бензин)',
+          power: 725,
+          mileage: '0 км',
+          accel: '3.3 сек',
+          drive: 'Полный 4RM-S / 8-F1 DCT',
+          price: 295000000,
+          description: 'Первый четырёхдверный четырёхместный автомобиль Ferrari с распашными задними дверями, атмосферным V12 и активной подвеской TASV.',
+          images: [
+            'https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 35,
+          brand: 'Ferrari',
+          model: 'Ferrari 812 Superfast',
+          body: 'Суперкар',
+          year: 2022,
+          engine: '6.5 л V12 Атмосферный (Бензин)',
+          power: 800,
+          mileage: '3 200 км',
+          accel: '2.9 сек',
+          drive: 'Задний / 7-F1 DCT',
+          price: 210000000,
+          description: 'Переднемоторный шедевр с 800-сильным атмосферным V12, полноуправляемым шасси Virtual Short Wheelbase 2.0 и карбоновой отделкой руля с LED-индикаторами.',
+          images: [
+            'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1200&q=80&sig=35',
+            'https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 36,
+          brand: 'Toyota',
+          model: 'Toyota GR Supra 3.0 Track Edition',
+          body: 'Купе',
+          year: 2024,
+          engine: '3.0 л R6 Twin-Scroll Turbo (Бензин)',
+          power: 387,
+          mileage: '1 500 км',
+          accel: '4.1 сек',
+          drive: 'Задний / 8-АКПП',
+          price: 36500000,
+          description: 'Культовое спорткупе подразделения GAZOO Racing с активным задним дифференциалом, адаптивной подвеской AVS и аудиосистемой JBL.',
+          images: [
+            'https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 37,
+          brand: 'Toyota',
+          model: 'Toyota Alphard Executive Lounge Hybrid',
+          body: 'Минивэн / Семейный',
+          year: 2025,
+          engine: '2.5 л Hybrid (Гибрид)',
+          power: 250,
+          mileage: '0 км',
+          accel: '8.4 сек',
+          drive: 'Полный E-Four / Вариатор e-CVT',
+          price: 52000000,
+          description: 'Бизнес-шаттл и премиальный семейный минивэн нового поколения с капитанскими креслами Ottoman, выдвижными столиками и двойным панорамным люком.',
+          images: [
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80&sig=37',
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 38,
+          brand: 'Toyota',
+          model: 'Toyota Camry 3.5 V6 Executive',
+          body: 'Седан',
+          year: 2024,
+          engine: '3.5 л V6 (Бензин)',
+          power: 301,
+          mileage: '3 900 км',
+          accel: '6.8 сек',
+          drive: 'Передний / 8-АКПП',
+          price: 24500000,
+          description: 'Надёжный бизнес-седан в топовой комплектации с трёхзонным климат-контролем, электрорегулировкой заднего дивана и пакетом безопасности Safety Sense.',
+          images: [
+            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 39,
+          brand: 'Toyota',
+          model: 'Toyota Sequoia TRD Pro Hybrid',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '3.4 л V6 i-FORCE MAX (Гибрид)',
+          power: 437,
+          mileage: '500 км',
+          accel: '5.8 сек',
+          drive: 'Полный 4WD / 10-АКПП',
+          price: 59000000,
+          description: 'Полноразмерный семиместный рамный внедорожник с амортизаторами FOX, коваными дисками BBS, люстрой LED и мощной гибридной установкой.',
+          images: [
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80&sig=39',
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 40,
+          brand: 'Lexus',
+          model: 'Lexus LX 600 VIP 4-Seater',
+          body: 'Внедорожник',
+          year: 2025,
+          engine: '3.5 л V6 Twin-Turbo (Бензин)',
+          power: 415,
+          mileage: '0 км',
+          accel: '6.9 сек',
+          drive: 'Полный 4WD / 10-АКПП',
+          price: 82000000,
+          description: 'Четырёхместный флагманский внедорожник в исполнении VIP с оттоманкой для правого пассажира, 25 динамиками Mark Levinson и гидропневматической подвеской.',
+          images: [
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80&sig=40',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 41,
+          brand: 'Lexus',
+          model: 'Lexus LC 500 Inspiration Series',
+          body: 'Купе',
+          year: 2024,
+          engine: '5.0 л V8 Атмосферный (Бензин)',
+          power: 477,
+          mileage: '1 100 км',
+          accel: '4.4 сек',
+          drive: 'Задний / 10-АКПП',
+          price: 73500000,
+          description: 'Концептуальное роскошное купе с эталонным звучанием атмосферного V8, карбоновым спойлером, дифференциалом Torsen и отделкой алькантарой.',
+          images: [
+            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 42,
+          brand: 'Lexus',
+          model: 'Lexus LS 500h Kiriko Executive',
+          body: 'Седан',
+          year: 2024,
+          engine: '3.5 л V6 Multi-Stage Hybrid (Гибрид)',
+          power: 359,
+          mileage: '2 400 км',
+          accel: '5.4 сек',
+          drive: 'Полный AWD / Multi-Stage Hybrid',
+          price: 66000000,
+          description: 'Представительский седан ручной сборки Такуми с декоративными вставками из резного хрусталя Kiriko и креслами с шиацу-массажем.',
+          images: [
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80&sig=42',
+            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 43,
+          brand: 'Lexus',
+          model: 'Lexus RX 500h F Sport Performance',
+          body: 'Кроссовер',
+          year: 2025,
+          engine: '2.4 л Turbo Hybrid DIRECT4 (Гибрид)',
+          power: 371,
+          mileage: '0 км',
+          accel: '6.2 сек',
+          drive: 'Полный DIRECT4 / 6-АКПП',
+          price: 49500000,
+          description: 'Спортивный гибридный кроссовер с подруливающей задней осью, тормозами Brembo с 6-поршневыми суппортами и 14-дюймовым дисплеем.',
+          images: [
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80&sig=43',
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 44,
+          brand: 'Nissan',
+          model: 'Nissan GT-R Nismo Special Edition',
+          body: 'Суперкар',
+          year: 2024,
+          engine: '3.8 л V6 Twin-Turbo (Бензин)',
+          power: 600,
+          mileage: '400 км',
+          accel: '2.7 сек',
+          drive: 'Полный ATTESA E-TS / 6-DCT',
+          price: 128000000,
+          description: 'Легендарный «Годзилла» в трековой версии Nismo с турбинами от болида GT3, карбоновым капотом и титановой выхлопной системой.',
+          images: [
+            'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 45,
+          brand: 'Nissan',
+          model: 'Nissan Patrol Nismo V8',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '5.6 л V8 (Бензин)',
+          power: 428,
+          mileage: '1 800 км',
+          accel: '6.5 сек',
+          drive: 'Полный All-Mode 4x4 / 7-АКПП',
+          price: 56000000,
+          description: 'Эксклюзивная версия Nismo для Ближнего Востока с амортизаторами Bilstein, 22-дюймовыми коваными дисками RAYS и спортивным обвесом.',
+          images: [
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80&sig=45',
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 46,
+          brand: 'Nissan',
+          model: 'Nissan Z Proto Spec Performance',
+          body: 'Купе',
+          year: 2024,
+          engine: '3.0 л V6 Twin-Turbo (Бензин)',
+          power: 405,
+          mileage: '900 км',
+          accel: '4.3 сек',
+          drive: 'Задний / 6-МКПП',
+          price: 34500000,
+          description: 'Лимитированная серия Proto Spec (240 экземпляров) с механической коробкой передач, тормозами Akebono и жёлтыми акцентами в салоне.',
+          images: [
+            'https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?auto=format&fit=crop&w=1200&q=80&sig=46',
+            'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 47,
+          brand: 'Honda',
+          model: 'Honda Civic Type R FL5',
+          body: 'Хэтчбек',
+          year: 2024,
+          engine: '2.0 л VTEC Turbo (Бензин)',
+          power: 329,
+          mileage: '650 км',
+          accel: '5.4 сек',
+          drive: 'Передний с LSD / 6-МКПП',
+          price: 32500000,
+          description: 'Рекордсмен Нюрбургринга среди переднеприводных автомобилей в культовом цвете Championship White с красными гоночными ковшами и телеметрией LogR.',
+          images: [
+            'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 48,
+          brand: 'Honda',
+          model: 'Honda NSX Type S',
+          body: 'Суперкар',
+          year: 2022,
+          engine: '3.5 л V6 Twin-Turbo + 3 электромотора (Гибрид)',
+          power: 608,
+          mileage: '1 300 км',
+          accel: '2.9 сек',
+          drive: 'Полный Sport Hybrid SH-AWD / 9-DCT',
+          price: 139000000,
+          description: 'Прощальная серия легендарного японского гибридного суперкара (всего 350 машин в мире) с карбоновой крышей и углерод-керамическими тормозами.',
+          images: [
+            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80&sig=48',
+            'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 49,
+          brand: 'Honda',
+          model: 'Honda Pilot Black Edition V6',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '3.5 л V6 DOHC (Бензин)',
+          power: 289,
+          mileage: '2 100 км',
+          accel: '7.5 сек',
+          drive: 'Полный i-VTM4 / 10-АКПП',
+          price: 33000000,
+          description: 'Просторный восьмиместный семейный кроссовер-внедорожник с чёрными 20-дюймовыми дисками, панорамной крышей и аудиосистемой Bose.',
+          images: [
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80&sig=49',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 50,
+          brand: 'Hyundai',
+          model: 'Hyundai Ioniq 5 N Performance',
+          body: 'Хэтчбек',
+          year: 2025,
+          engine: 'Два электромотора 84 кВт·ч (Электро)',
+          power: 650,
+          mileage: '0 км',
+          accel: '3.4 сек',
+          drive: 'Полный AWD / Имитация 8-DCT N e-Shift',
+          price: 41000000,
+          description: 'Обладатель титула «World Performance Car» с режимом N Grin Boost, дрифт-оптимизатором и 800-вольтовой сверхбыстрой зарядкой.',
+          images: [
+            'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1200&q=80&sig=50',
+            'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 51,
+          brand: 'Hyundai',
+          model: 'Hyundai Palisade Calligraphy VIP',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: '3.8 л V6 GDI (Бензин)',
+          power: 295,
+          mileage: '1 200 км',
+          accel: '7.7 сек',
+          drive: 'Полный HTRAC / 8-АКПП',
+          price: 31500000,
+          description: 'Флагманский семейный кроссовер в топовой версии Calligraphy с отделкой кожей Nappa, капитанскими креслами с вентиляцией и двойным люком.',
+          images: [
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80&sig=51',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 52,
+          brand: 'Hyundai',
+          model: 'Hyundai Sonata N Line 2.5 Turbo',
+          body: 'Седан',
+          year: 2024,
+          engine: '2.5 л T-GDI (Бензин)',
+          power: 290,
+          mileage: '3 100 км',
+          accel: '6.2 сек',
+          drive: 'Передний / 8-DCT',
+          price: 22500000,
+          description: 'Спортивный седан с лаунч-контролем, четырьмя патрубками выхлопа, 19-дюймовыми дисками N Line и изогнутым панорамным дисплеем.',
+          images: [
+            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=1200&q=80&sig=52',
+            'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 53,
+          brand: 'Kia',
+          model: 'Kia EV6 GT AWD',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: 'Два электромотора 77.4 кВт·ч (Электро)',
+          power: 585,
+          mileage: '850 км',
+          accel: '3.5 сек',
+          drive: 'Полный AWD / Редуктор',
+          price: 38500000,
+          description: 'Динамичный электрический кроссовер с электронным дифференциалом e-LSD, ковшами из замши с неоновой прострочкой и зарядкой от 10 до 80% за 18 минут.',
+          images: [
+            'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=1200&q=80&sig=53',
+            'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 54,
+          brand: 'Kia',
+          model: 'Kia Stinger GT Tribute Edition',
+          body: 'Лифтбек',
+          year: 2023,
+          engine: '3.3 л V6 Twin-Turbo (Бензин)',
+          power: 370,
+          mileage: '4 200 км',
+          accel: '4.9 сек',
+          drive: 'Полный AWD / 8-АКПП',
+          price: 29500000,
+          description: 'Коллекционная финальная серия гран-турера в матовом окрасе Moonscape с тормозами Brembo и отделкой терракотовой кожей Nappa.',
+          images: [
+            'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1200&q=80&sig=54',
+            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 55,
+          brand: 'Kia',
+          model: 'Kia Carnival Hi-Limousine 4-Seater',
+          body: 'Минивэн / Семейный',
+          year: 2024,
+          engine: '3.5 л V6 GDI (Бензин)',
+          power: 294,
+          mileage: '700 км',
+          accel: '8.5 сек',
+          drive: 'Передний / 8-АКПП',
+          price: 43000000,
+          description: 'Премиальный минивэн с высокой крышей, 21.5-дюймовым потолочным смарт-телевизором, очистителем воздуха и массажными креслами.',
+          images: [
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80&sig=55',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 56,
+          brand: 'Tesla',
+          model: 'Tesla Model X Plaid 6-Seat',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: 'Три электромотора 100 кВт·ч (Электро)',
+          power: 1020,
+          mileage: '300 км',
+          accel: '2.6 сек',
+          drive: 'Полный Tri-Motor AWD / Редуктор',
+          price: 69000000,
+          description: 'Шестиместный электрический SUV с дверьми «Крылья сокола», панорамным лобовым стеклом, штурвалом Yoke и игровым компьютером на борту.',
+          images: [
+            'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1536700503339-1e4b06520771?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 57,
+          brand: 'Tesla',
+          model: 'Tesla Cybertruck Cyberbeast Foundation',
+          body: 'Пикап',
+          year: 2025,
+          engine: 'Три электромотора 123 кВт·ч (Электро)',
+          power: 845,
+          mileage: '50 км',
+          accel: '2.7 сек',
+          drive: 'Полный Tri-Motor AWD / Редуктор',
+          price: 94000000,
+          description: 'Футуристический пикап из сверхпрочной нержавеющей стали с бронированным остеклением, управлением по проводам Steer-by-Wire и пневмоподвеской.',
+          images: [
+            'https://images.unsplash.com/photo-1536700503339-1e4b06520771?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 58,
+          brand: 'Tesla',
+          model: 'Tesla Model 3 Performance Highland',
+          body: 'Седан',
+          year: 2025,
+          engine: 'Два электромотора 82 кВт·ч (Электро)',
+          power: 510,
+          mileage: '0 км',
+          accel: '3.1 сек',
+          drive: 'Полный Dual-Motor AWD / Редуктор',
+          price: 33500000,
+          description: 'Обновлённый спортивный электроседан с адаптивной подвеской, трековым режимом Track Mode V3, коваными 20-дюймовыми дисками и спортивными креслами.',
+          images: [
+            'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80&sig=58',
+            'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1536700503339-1e4b06520771?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 59,
+          brand: 'Rolls-Royce',
+          model: 'Rolls-Royce Cullinan Black Badge Series II',
+          body: 'Внедорожник',
+          year: 2025,
+          engine: '6.75 л V12 Twin-Turbo (Бензин)',
+          power: 600,
+          mileage: '0 км',
+          accel: '4.9 сек',
+          drive: 'Полный AWD / 8-АКПП ZF',
+          price: 310000000,
+          description: 'Абсолютная вершина роскоши среди внедорожников. Тёмный хром Spirit of Ecstasy, потолок «Звёздное небо» с падающими кометами и коктейльный столик.',
+          images: [
+            'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 60,
+          brand: 'Rolls-Royce',
+          model: 'Rolls-Royce Spectre Ultra-Luxury EV',
+          body: 'Купе',
+          year: 2025,
+          engine: 'Два электромотора 102 кВт·ч (Электро)',
+          power: 585,
+          mileage: '100 км',
+          accel: '4.5 сек',
+          drive: 'Полный AWD / Редуктор',
+          price: 285000000,
+          description: 'Первый полностью электрический супер-купе из Гудвуда с подсветкой решётки Pantheon, дверями Starlight Doors и подвеской Planar.',
+          images: [
+            'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 61,
+          brand: 'Rolls-Royce',
+          model: 'Rolls-Royce Ghost Extended Bespoke',
+          body: 'Седан',
+          year: 2024,
+          engine: '6.75 л V12 Twin-Turbo (Бензин)',
+          power: 571,
+          mileage: '600 км',
+          accel: '4.8 сек',
+          drive: 'Полный AWD / 8-АКПП ZF',
+          price: 245000000,
+          description: 'Удлинённый на 170 мм седан с креслами Serenity, холодильником для шампанского, акустикой Bespoke Audio и подсвечиваемой панелью на торпедо.',
+          images: [
+            'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1200&q=80&sig=61',
+            'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 62,
+          brand: 'Bentley',
+          model: 'Bentley Continental GT Speed',
+          body: 'Купе',
+          year: 2025,
+          engine: '4.0 л V8 Ultra Performance Hybrid (Гибрид)',
+          power: 782,
+          mileage: '0 км',
+          accel: '3.2 сек',
+          drive: 'Полный AWD / 8-DCT',
+          price: 192000000,
+          description: 'Самый динамичный дорожный Bentley в истории с поворотным трёхгранным дисплеем Bentley Rotating Display и акустикой Naim for Bentley.',
+          images: [
+            'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1200&q=80&sig=62',
+            'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 63,
+          brand: 'Bentley',
+          model: 'Bentley Bentayga EWB Azure',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '4.0 л V8 Twin-Turbo (Бензин)',
+          power: 550,
+          mileage: '800 км',
+          accel: '4.6 сек',
+          drive: 'Полный AWD / 8-АКПП',
+          price: 165000000,
+          description: 'Удлинённый флагманский кроссовер с авиационными креслами Airline Seat, автоматической климатической системой контроля осанки и шпоном Open-Pore.',
+          images: [
+            'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1200&q=80&sig=63',
+            'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 64,
+          brand: 'Bentley',
+          model: 'Bentley Flying Spur Mulliner',
+          body: 'Седан',
+          year: 2024,
+          engine: '6.0 л W12 Twin-Turbo (Бензин)',
+          power: 635,
+          mileage: '1 100 км',
+          accel: '3.8 сек',
+          drive: 'Полный AWD / 8-DCT',
+          price: 184000000,
+          description: 'Роскошный седан от придворного ателье Mulliner с 22-дюймовыми дисками с самовыравнивающимися колпачками и ромбовидной прострочкой Diamond-in-Diamond.',
+          images: [
+            'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?auto=format&fit=crop&w=1200&q=80&sig=64',
+            'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 65,
+          brand: 'Volkswagen',
+          model: 'Volkswagen Touareg R eHybrid',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: '3.0 л V6 TSI + Электромотор (Гибрид)',
+          power: 462,
+          mileage: '1 500 км',
+          accel: '5.1 сек',
+          drive: 'Полный 4MOTION / 8-АКПП',
+          price: 46500000,
+          description: 'Флагманский гибридный кроссовер Volkswagen в цвете Lapiz Blue с матричными фарами IQ.LIGHT HD, пневмоподвеской и кожей Puglia.',
+          images: [
+            'https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?auto=format&fit=crop&w=1200&q=80&sig=65',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 66,
+          brand: 'Volkswagen',
+          model: 'Volkswagen Golf R 20 Years Edition',
+          body: 'Хэтчбек',
+          year: 2023,
+          engine: '2.0 л TSI (Бензин)',
+          power: 333,
+          mileage: '2 400 км',
+          accel: '4.6 сек',
+          drive: 'Полный 4MOTION с R-Performance Torque Vectoring / 7-DSG',
+          price: 29800000,
+          description: 'Юбилейный полноприводный хот-хэтч с титановым выхлопом Akrapovič, дрифт-режимом и карбоновой отделкой интерьера.',
+          images: [
+            'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1200&q=80&sig=66',
+            'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 67,
+          brand: 'Volkswagen',
+          model: 'Volkswagen Multivan T7 Style eHybrid',
+          body: 'Минивэн / Семейный',
+          year: 2024,
+          engine: '1.4 л TSI + Электромотор (Гибрид)',
+          power: 218,
+          mileage: '900 км',
+          accel: '9.0 сек',
+          drive: 'Передний / 6-DSG',
+          price: 39500000,
+          description: 'Инновационный семиместный семейный минивэн с трансформируемым салоном-трансформером, панорамной крышей и аудиосистемой Harman Kardon.',
+          images: [
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80&sig=67',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 68,
+          brand: 'Ford',
+          model: 'Ford Mustang Shelby GT500 Carbon Track',
+          body: 'Купе',
+          year: 2023,
+          engine: '5.2 л V8 Predator Supercharged (Бензин)',
+          power: 760,
+          mileage: '1 700 км',
+          accel: '3.3 сек',
+          drive: 'Задний / 7-Tremec DCT',
+          price: 67500000,
+          description: 'Самый мощный дорожный Mustang в истории с механическим нагнетателем Eaton, карбоновыми колёсами и антикрылом GT4.',
+          images: [
+            'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 69,
+          brand: 'Ford',
+          model: 'Ford F-150 Raptor R V8',
+          body: 'Пикап',
+          year: 2024,
+          engine: '5.2 л V8 Supercharged (Бензин)',
+          power: 720,
+          mileage: '400 км',
+          accel: '3.7 сек',
+          drive: 'Полный 4WD / 10-АКПП',
+          price: 74000000,
+          description: 'Экстремальный внедорожный пикап с двигателем от Shelby GT500, 37-дюймовыми шинами BFGoodrich и амортизаторами FOX Live Valve.',
+          images: [
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80&sig=69',
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 70,
+          brand: 'Ford',
+          model: 'Ford Bronco Raptor 3.0 EcoBoost',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '3.0 л V6 Twin-Turbo (Бензин)',
+          power: 418,
+          mileage: '800 км',
+          accel: '5.6 сек',
+          drive: 'Полный 4x4 / 10-АКПП',
+          price: 53500000,
+          description: 'Хардкорный рамный внедорожник со съёмной крышей и дверями, ходом подвески 355 мм и усиленной рамой Ford Performance.',
+          images: [
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80&sig=70',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 71,
+          brand: 'Chevrolet',
+          model: 'Chevrolet Corvette Z06 3LZ',
+          body: 'Суперкар',
+          year: 2024,
+          engine: '5.5 л V8 LT6 Flat-Plane Crank (Бензин)',
+          power: 670,
+          mileage: '750 км',
+          accel: '2.6 сек',
+          drive: 'Задний / 8-DCT',
+          price: 91000000,
+          description: 'Среднемоторный американский суперкар с самым мощным атмосферным V8 в истории серийных авто (8600 об/мин) и пакетом Z07.',
+          images: [
+            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80&sig=71',
+            'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 72,
+          brand: 'Chevrolet',
+          model: 'Chevrolet Tahoe High Country 6.2 V8',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '6.2 л V8 EcoTec3 (Бензин)',
+          power: 420,
+          mileage: '1 300 км',
+          accel: '6.6 сек',
+          drive: 'Полный 4WD / 10-АКПП',
+          price: 55000000,
+          description: 'Полноразмерный американский внедорожник в максимальном исполнении High Country с адаптивной пневмоподвеской Air Ride и автопилотом Super Cruise.',
+          images: [
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80&sig=72',
+            'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 73,
+          brand: 'Chevrolet',
+          model: 'Chevrolet Camaro ZL1 1LE Track',
+          body: 'Купе',
+          year: 2023,
+          engine: '6.2 л V8 LT4 Supercharged (Бензин)',
+          power: 650,
+          mileage: '2 200 км',
+          accel: '3.5 сек',
+          drive: 'Задний / 6-МКПП',
+          price: 49000000,
+          description: 'Трековое купе с гоночными амортизаторами Multimatic DSSV, карбоновым антикрылом и ковшами Recaro.',
+          images: [
+            'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=1200&q=80&sig=73',
+            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 74,
+          brand: 'Dodge',
+          model: 'Dodge Challenger SRT Hellcat Redeye Jailbreak',
+          body: 'Купе',
+          year: 2023,
+          engine: '6.2 л HEMI V8 Supercharged (Бензин)',
+          power: 808,
+          mileage: '1 100 км',
+          accel: '3.4 сек',
+          drive: 'Задний / 8-АКПП TorqueFlite',
+          price: 68000000,
+          description: 'Коллекционный маслкар прощальной серии Last Call с расширенными арками Widebody и системой охлаждения нагнетателя SRT Power Chiller.',
+          images: [
+            'https://images.unsplash.com/photo-1612544448445-b8232cff3b6c?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 75,
+          brand: 'Dodge',
+          model: 'Dodge Charger SRT Hellcat Widebody',
+          body: 'Седан',
+          year: 2023,
+          engine: '6.2 л HEMI V8 Supercharged (Бензин)',
+          power: 717,
+          mileage: '2 600 км',
+          accel: '3.6 сек',
+          drive: 'Задний / 8-АКПП TorqueFlite',
+          price: 58500000,
+          description: 'Самый быстрый серийный четырёхдверный маслкар с тормозами Brembo, адаптивной подвеской Bilstein и аудиосистемой Harman Kardon.',
+          images: [
+            'https://images.unsplash.com/photo-1612544448445-b8232cff3b6c?auto=format&fit=crop&w=1200&q=80&sig=75',
+            'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 76,
+          brand: 'Dodge',
+          model: 'Dodge Durango SRT Hellcat',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '6.2 л HEMI V8 Supercharged (Бензин)',
+          power: 710,
+          mileage: '500 км',
+          accel: '3.5 сек',
+          drive: 'Полный AWD / 8-АКПП',
+          price: 63500000,
+          description: 'Трёхрядный семейный SUV с характером суперкара, способный буксировать до 3.9 тонн и разгоняться до 100 км/ч за 3.5 секунды.',
+          images: [
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80&sig=76',
+            'https://images.unsplash.com/photo-1612544448445-b8232cff3b6c?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 77,
+          brand: 'Range Rover',
+          model: 'Range Rover Autobiography Long Wheelbase',
+          body: 'Внедорожник',
+          year: 2025,
+          engine: '4.4 л V8 Twin-Turbo (Бензин)',
+          power: 530,
+          mileage: '0 км',
+          accel: '4.7 сек',
+          drive: 'Полный AWD / 8-АКПП',
+          price: 124000000,
+          description: 'Флагманский удлинённый Range Rover с задними креслами Executive Class Comfort-Plus, активным шумоподавлением в подголовниках и акустикой Meridian Signature.',
+          images: [
+            'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1200&q=80&sig=77',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 78,
+          brand: 'Range Rover',
+          model: 'Range Rover Defender 110 V8 Carpathian',
+          body: 'Внедорожник',
+          year: 2024,
+          engine: '5.0 л V8 Supercharged (Бензин)',
+          power: 525,
+          mileage: '1 100 км',
+          accel: '5.4 сек',
+          drive: 'Полный AWD / 8-АКПП',
+          price: 79500000,
+          description: 'Лимитированная серия Carpathian Edition с заводской матовой защитной плёнкой, 22-дюймовыми чёрными дисками и системой Terrain Response 2.',
+          images: [
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80&sig=78',
+            'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80'
+          ]
+        },
+        {
+          id: 79,
+          brand: 'Range Rover',
+          model: 'Range Rover Velar Dynamic HSE P400',
+          body: 'Кроссовер',
+          year: 2024,
+          engine: '3.0 л R6 Mild-Hybrid (Гибрид)',
+          power: 400,
+          mileage: '1 600 км',
+          accel: '5.5 сек',
+          drive: 'Полный AWD / 8-АКПП',
+          price: 51500000,
+          description: 'Эталон минималистичного британского дизайна с выдвижными дверными ручками, изогнутым 11.4-дюймовым экраном Pivi Pro и пневмоподвеской.',
+          images: [
+            'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1200&q=80&sig=79',
+            'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80'
+          ]
+        }
+      ];
+
+      // Форматирование цены в тенге (78 500 000 ₸)
+      function formatTenge(amount) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₸';
+      }
+
+      // 2. ЗАПОЛНЕНИЕ ВЫПАДАЮЩИХ СПИСКОВ АВТОМОБИЛЕЙ В ФОРМАХ И МАРОК В ФИЛЬТРЕ
+      const brandSelect = document.getElementById('filter-brand');
+      const uniqueBrands = [...new Set(CARS_DATA.map(car => car.brand))].sort((a, b) => a.localeCompare(b));
+      brandSelect.innerHTML = [
+        '<option value="all">Все марки (20)</option>',
+        ...uniqueBrands.map(b => `<option value="${b}">${b}</option>`)
+      ].join('');
+
+      const carsTotalEl = document.getElementById('cars-total');
+      if (carsTotalEl) carsTotalEl.textContent = CARS_DATA.length;
+
+      const carSelectLists = document.querySelectorAll('.car-select-list');
+      carSelectLists.forEach(selectEl => {
+        const optionsHtml = [
+          '<option value="Индивидуальный подбор">Индивидуальный подбор автомобиля</option>',
+          ...CARS_DATA.map(car => `<option value="${car.model}">${car.model} (${formatTenge(car.price)})</option>`)
+        ].join('');
+        selectEl.innerHTML = optionsHtml;
+      });
+
+      // 3. СИСТЕМА ВСПЛЫВАЮЩИХ УВЕДОМЛЕНИЙ (TOAST)
+      const toastBox = document.getElementById('toast-box');
+
+      function showNotification(title, text, isError = false) {
+        const toast = document.createElement('div');
+        toast.className = `pointer-events-auto bg-graphite border ${isError ? 'border-red-500/70' : 'border-champagne/60'} rounded-arch p-4 shadow-2xl flex items-start gap-3.5 toast-in`;
+        toast.innerHTML = `
+          <div class="w-8 h-8 rounded-arch ${isError ? 'bg-red-500/15 text-red-400' : 'bg-champagne/15 text-champagne'} flex items-center justify-center shrink-0 mt-0.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              ${isError
+                ? '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'
+                : '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />'}
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-bold text-platinum">${title}</p>
+            <p class="text-xs text-silver mt-1 leading-relaxed">${text}</p>
+          </div>
+        `;
+        toastBox.appendChild(toast);
+
+        setTimeout(() => {
+          toast.classList.remove('toast-in');
+          toast.classList.add('toast-out');
+          setTimeout(() => toast.remove(), 250);
+        }, 4200);
+      }
+
+      // 4. ФИЛЬТРАЦИЯ, ПОИСК И СОРТИРОВКА КАТАЛОГА
+      const carsGrid = document.getElementById('cars-grid');
+      const emptyState = document.getElementById('empty-state');
+      const carsCountEl = document.getElementById('cars-count');
+
+      const searchInput = document.getElementById('filter-search');
+      const bodySelect = document.getElementById('filter-body');
+      const priceSelect = document.getElementById('filter-price');
+      const sortSelect = document.getElementById('filter-sort');
+      const resetFiltersBtn = document.getElementById('reset-filters-btn');
+      const emptyResetBtn = document.getElementById('empty-reset-btn');
+
+      function applyFilters() {
+        const query = searchInput.value.trim().toLowerCase();
+        const brand = brandSelect.value;
+        const body = bodySelect.value;
+        const priceRange = priceSelect.value;
+        const sortType = sortSelect.value;
+
+        let result = CARS_DATA.filter(car => {
+          const matchesQuery = !query || car.model.toLowerCase().includes(query) || car.brand.toLowerCase().includes(query) || car.engine.toLowerCase().includes(query);
+          const matchesBrand = brand === 'all' || car.brand === brand;
+          const matchesBody = body === 'all' || car.body === body;
+
+          let matchesPrice = true;
+          if (priceRange === 'under50') {
+            matchesPrice = car.price < 50000000;
+          } else if (priceRange === '50to80') {
+            matchesPrice = car.price >= 50000000 && car.price < 80000000;
+          } else if (priceRange === '80to150') {
+            matchesPrice = car.price >= 80000000 && car.price <= 150000000;
+          } else if (priceRange === 'over150') {
+            matchesPrice = car.price > 150000000;
+          }
+
+          return matchesQuery && matchesBrand && matchesBody && matchesPrice;
+        });
+
+        // Сортировка
+        if (sortType === 'price-asc') {
+          result.sort((a, b) => a.price - b.price);
+        } else if (sortType === 'price-desc') {
+          result.sort((a, b) => b.price - a.price);
+        } else if (sortType === 'power-desc') {
+          result.sort((a, b) => b.power - a.power);
+        }
+
+        carsCountEl.textContent = result.length;
+
+        if (result.length === 0) {
+          carsGrid.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+          return;
+        }
+
+        carsGrid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+
+        carsGrid.innerHTML = result.map(car => `
+          <article class="car-card rounded-arch overflow-hidden flex flex-col justify-between">
+            <div>
+              <!-- Фотография автомобиля -->
+              <div class="relative h-56 sm:h-60 overflow-hidden bg-obsidian">
+                <img
+                  src="${car.images[0]}"
+                  alt="${car.model}"
+                  loading="lazy"
+                  class="car-photo w-full h-full object-cover"
+                  onerror="this.onerror=null;this.src='https://placehold.co/800x500/121317/D4AF37?text=${encodeURIComponent(car.model)}';"
+                >
+                <div class="absolute inset-0 bg-gradient-to-t from-graphite via-transparent to-black/30"></div>
+                
+                <!-- Бейджи кузова и года -->
+                <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-2">
+                  <span class="px-2.5 py-1 rounded-arch text-[11px] uppercase tracking-wider font-semibold bg-obsidian/85 backdrop-blur-md text-platinum border border-white/10">
+                    ${car.body}
+                  </span>
+                  <span class="px-2.5 py-1 rounded-arch text-[11px] font-bold bg-champagne text-obsidian">
+                    ${car.year} г.
+                  </span>
+                </div>
+              </div>
+
+              <!-- Заголовок и характеристики -->
+              <div class="p-6 pb-4">
+                <p class="text-[11px] uppercase tracking-[0.2em] text-champagne font-semibold mb-1">${car.brand}</p>
+                <h3 class="font-display text-xl sm:text-2xl font-bold text-platinum leading-snug mb-4">${car.model}</h3>
+
+                <!-- Сетка ключевых ТТХ -->
+                <div class="grid grid-cols-3 gap-2 pt-3 border-t border-borderline text-xs">
+                  <div class="bg-obsidian/70 rounded-arch p-2.5">
+                    <span class="block text-[10px] text-silver uppercase">Двигатель</span>
+                    <span class="block text-platinum font-semibold mt-0.5 truncate" title="${car.engine}">${car.engine.split(' ').slice(0, 3).join(' ')}</span>
+                  </div>
+                  <div class="bg-obsidian/70 rounded-arch p-2.5">
+                    <span class="block text-[10px] text-silver uppercase">Мощность</span>
+                    <span class="block text-champagne font-bold mt-0.5">${car.power} л.с.</span>
+                  </div>
+                  <div class="bg-obsidian/70 rounded-arch p-2.5">
+                    <span class="block text-[10px] text-silver uppercase">Пробег</span>
+                    <span class="block text-platinum font-semibold mt-0.5">${car.mileage}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Нижняя панель: Цена и кнопка Подробнее -->
+            <div class="px-6 pb-6 pt-3 flex items-center justify-between gap-3 border-t border-borderline/70 mt-2">
+              <div>
+                <span class="block text-[10px] uppercase tracking-wider text-silver">Демо-цена</span>
+                <span class="font-display text-lg sm:text-xl font-bold text-platinum">${formatTenge(car.price)}</span>
+              </div>
+
+              <button
+                type="button"
+                data-car-id="${car.id}"
+                class="open-detail-btn inline-flex items-center gap-2 bg-surface hover:bg-champagne text-platinum hover:text-obsidian border border-champagne/40 hover:border-champagne font-semibold text-xs uppercase tracking-wider px-4 py-3 rounded-arch transition-all duration-300 cursor-pointer"
+              >
+                <span>Подробнее</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </article>
+        `).join('');
+      }
+
+      function resetAllFilters() {
+        searchInput.value = '';
+        brandSelect.value = 'all';
+        bodySelect.value = 'all';
+        priceSelect.value = 'all';
+        sortSelect.value = 'default';
+        applyFilters();
+      }
+
+      searchInput.addEventListener('input', applyFilters);
+      brandSelect.addEventListener('change', applyFilters);
+      bodySelect.addEventListener('change', applyFilters);
+      priceSelect.addEventListener('change', applyFilters);
+      sortSelect.addEventListener('change', applyFilters);
+      resetFiltersBtn.addEventListener('click', resetAllFilters);
+      emptyResetBtn.addEventListener('click', resetAllFilters);
+
+      // 5. ДЕТАЛЬНОЕ МОДАЛЬНОЕ ОКНО АВТОМОБИЛЯ
+      const detailModal = document.getElementById('detail-modal');
+      const closeDetailBtn = document.getElementById('close-detail-btn');
+      const modalMainImg = document.getElementById('modal-main-img');
+      const modalThumbs = document.getElementById('modal-thumbs');
+      const modalRequestBtn = document.getElementById('modal-request-btn');
+
+      let activeDetailCar = null;
+
+      function openCarDetail(carId) {
+        const car = CARS_DATA.find(item => item.id === carId);
+        if (!car) return;
+
+        activeDetailCar = car;
+
+        document.getElementById('modal-car-badge').textContent = `${car.body} • ${car.year}`;
+        document.getElementById('modal-car-title').textContent = car.model;
+        document.getElementById('modal-car-desc').textContent = car.description;
+        document.getElementById('spec-year').textContent = `${car.year} г.`;
+        document.getElementById('spec-engine').textContent = car.engine;
+        document.getElementById('spec-power').textContent = `${car.power} л.с.`;
+        document.getElementById('spec-accel').textContent = car.accel;
+        document.getElementById('spec-drive').textContent = car.drive;
+        document.getElementById('spec-mileage').textContent = car.mileage;
+        document.getElementById('modal-car-price').textContent = formatTenge(car.price);
+
+        modalMainImg.src = car.images[0];
+        modalMainImg.onerror = function() {
+          this.onerror = null;
+          this.src = `https://placehold.co/1000x625/08080A/D4AF37?text=${encodeURIComponent(car.model)}`;
+        };
+
+        modalThumbs.innerHTML = car.images.map((imgUrl, idx) => `
+          <button type="button" data-thumb-src="${imgUrl}" class="thumb-btn rounded-arch overflow-hidden border-2 ${idx === 0 ? 'border-champagne' : 'border-borderline opacity-70 hover:opacity-100'} aspect-[16/10] bg-obsidian transition-all cursor-pointer">
+            <img src="${imgUrl}" alt="${car.model} ракурс ${idx + 1}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/300x200/121317/D4AF37?text=View+${idx + 1}';">
+          </button>
+        `).join('');
+
+        detailModal.classList.remove('hidden');
+        detailModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeCarDetail() {
+        detailModal.classList.add('hidden');
+        detailModal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+
+      // Делегирование клика по кнопке «Подробнее» в сетке
+      carsGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.open-detail-btn');
+        if (!btn) return;
+        openCarDetail(Number(btn.dataset.carId));
+      });
+
+      // Переключение ракурсов в детальной карточке
+      modalThumbs.addEventListener('click', (e) => {
+        const thumbBtn = e.target.closest('.thumb-btn');
+        if (!thumbBtn) return;
+
+        modalMainImg.src = thumbBtn.dataset.thumbSrc;
+        modalThumbs.querySelectorAll('.thumb-btn').forEach(b => {
+          b.classList.remove('border-champagne');
+          b.classList.add('border-borderline', 'opacity-70');
+        });
+        thumbBtn.classList.remove('border-borderline', 'opacity-70');
+        thumbBtn.classList.add('border-champagne');
+      });
+
+      closeDetailBtn.addEventListener('click', closeCarDetail);
+      detailModal.addEventListener('click', (e) => {
+        if (e.target === detailModal) closeCarDetail();
+      });
+
+      // 6. МОДАЛЬНОЕ ОКНО ФОРМЫ ЗАЯВКИ
+      const requestModal = document.getElementById('request-modal');
+      const closeRequestBtn = document.getElementById('close-request-btn');
+      const modalCarSelect = document.getElementById('m-car');
+
+      function openRequestModal(preselectedCar = 'Индивидуальный подбор') {
+        if (preselectedCar) {
+          modalCarSelect.value = preselectedCar;
+        }
+        requestModal.classList.remove('hidden');
+        requestModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeRequestModal() {
+        requestModal.classList.add('hidden');
+        requestModal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+
+      // Кнопки «Заказать звонок» и «Связаться с нами»
+      document.querySelectorAll('[data-open-request]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Закрыть мобильное меню, если оно открыто
+          if (!mobileNav.classList.contains('hidden')) {
+            toggleMobileNav();
+          }
+          openRequestModal(btn.dataset.openRequest);
+        });
+      });
+
+      // Кнопка «Оставить заявку» внутри детального просмотра автомобиля
+      modalRequestBtn.addEventListener('click', () => {
+        const selectedModel = activeDetailCar ? activeDetailCar.model : 'Индивидуальный подбор';
+        closeCarDetail();
+        openRequestModal(selectedModel);
+      });
+
+      closeRequestBtn.addEventListener('click', closeRequestModal);
+      requestModal.addEventListener('click', (e) => {
+        if (e.target === requestModal) closeRequestModal();
+      });
+
+      // 7. МАСКА ВВОДА ТЕЛЕФОНА (+7 (XXX) XXX-XX-XX)
+      document.querySelectorAll('.phone-mask').forEach(input => {
+        input.addEventListener('input', (e) => {
+          let digits = e.target.value.replace(/\D/g, '');
+          if (!digits) {
+            e.target.value = '';
+            return;
+          }
+          if (digits[0] === '8') digits = '7' + digits.slice(1);
+          if (digits[0] !== '7') digits = '7' + digits;
+
+          let formatted = '+7';
+          if (digits.length > 1) formatted += ' (' + digits.substring(1, 4);
+          if (digits.length >= 5) formatted += ') ' + digits.substring(4, 7);
+          if (digits.length >= 8) formatted += '-' + digits.substring(7, 9);
+          if (digits.length >= 10) formatted += '-' + digits.substring(9, 11);
+
+          e.target.value = formatted;
+        });
+      });
+
+      // 8. ВАЛИДАЦИЯ И ОТПРАВКА ДЕМО-ФОРМ
+      const modalRequestForm = document.getElementById('modal-request-form');
+      modalRequestForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById('m-name');
+        const phoneInput = document.getElementById('m-phone');
+        const errName = document.getElementById('m-err-name');
+        const errPhone = document.getElementById('m-err-phone');
+
+        let valid = true;
+        if (nameInput.value.trim().length < 2) {
+          errName.classList.remove('hidden');
+          nameInput.classList.add('border-red-500');
+          valid = false;
+        } else {
+          errName.classList.add('hidden');
+          nameInput.classList.remove('border-red-500');
+        }
+
+        if (phoneInput.value.replace(/\D/g, '').length < 11) {
+          errPhone.classList.remove('hidden');
+          phoneInput.classList.add('border-red-500');
+          valid = false;
+        } else {
+          errPhone.classList.add('hidden');
+          phoneInput.classList.remove('border-red-500');
+        }
+
+        if (!valid) {
+          showNotification('Проверьте заполнение полей', 'Укажите корректное имя и 11-значный номер телефона.', true);
+          return;
+        }
+
+        const chosenCar = modalCarSelect.value;
+        const clientName = nameInput.value.trim();
+        modalRequestForm.reset();
+        closeRequestModal();
+
+        showNotification(
+          'Демо-заявка сформирована',
+          `Спасибо, ${clientName}! Выбранный автомобиль: «${chosenCar}». Это демонстрация интерфейса — реальная заявка дилеру не отправлялась.`
+        );
+      });
+
+      const footerRequestForm = document.getElementById('footer-request-form');
+      footerRequestForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById('f-name');
+        const phoneInput = document.getElementById('f-phone');
+        const carSelect = document.getElementById('f-car');
+        const errName = footerRequestForm.querySelector('.f-err-name');
+        const errPhone = footerRequestForm.querySelector('.f-err-phone');
+
+        let valid = true;
+        if (nameInput.value.trim().length < 2) {
+          errName.classList.remove('hidden');
+          nameInput.classList.add('border-red-500');
+          valid = false;
+        } else {
+          errName.classList.add('hidden');
+          nameInput.classList.remove('border-red-500');
+        }
+
+        if (phoneInput.value.replace(/\D/g, '').length < 11) {
+          errPhone.classList.remove('hidden');
+          phoneInput.classList.add('border-red-500');
+          valid = false;
+        } else {
+          errPhone.classList.add('hidden');
+          phoneInput.classList.remove('border-red-500');
+        }
+
+        if (!valid) {
+          showNotification('Ошибка валидации', 'Пожалуйста, заполните обязательные поля формы.', true);
+          return;
+        }
+
+        const clientName = nameInput.value.trim();
+        const selectedAuto = carSelect.value;
+        footerRequestForm.reset();
+
+        showNotification(
+          'Демо-обращение принято',
+          `Благодарим, ${clientName}! Интересующая модель: «${selectedAuto}». Демонстрационный режим портфолио.`
+        );
+      });
+
+      // 9. МОБИЛЬНОЕ МЕНЮ НАВИГАЦИИ
+      const mobileToggle = document.getElementById('mobile-menu-toggle');
+      const mobileNav = document.getElementById('mobile-nav');
+      const iconOpen = document.getElementById('icon-menu-open');
+      const iconClose = document.getElementById('icon-menu-close');
+
+      function toggleMobileNav() {
+        const isClosed = mobileNav.classList.contains('hidden');
+        mobileNav.classList.toggle('hidden', !isClosed);
+        iconOpen.classList.toggle('hidden', isClosed);
+        iconClose.classList.toggle('hidden', !isClosed);
+      }
+
+      mobileToggle.addEventListener('click', toggleMobileNav);
+      document.querySelectorAll('.mobile-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (!mobileNav.classList.contains('hidden')) toggleMobileNav();
+        });
+      });
+
+      // 10. ГАЛЕРЕЯ LIGHTBOX
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-image');
+      const lightboxText = document.getElementById('lightbox-text');
+      const closeLightboxBtn = document.getElementById('close-lightbox');
+
+      document.querySelectorAll('.gallery-trigger').forEach(btn => {
+        btn.addEventListener('click', () => {
+          lightboxImg.src = btn.dataset.full;
+          lightboxText.textContent = btn.dataset.caption || '';
+          lightbox.classList.remove('hidden');
+          lightbox.classList.add('flex');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+
+      function closeLightbox() {
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+        lightboxImg.src = '';
+        document.body.style.overflow = '';
+      }
+
+      closeLightboxBtn.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+
+      // Закрытие всех модальных окон клавишей Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (!detailModal.classList.contains('hidden')) closeCarDetail();
+          if (!requestModal.classList.contains('hidden')) closeRequestModal();
+          if (!lightbox.classList.contains('hidden')) closeLightbox();
+        }
+      });
+
+      // 11. АККОРДЕОН FAQ
+      document.querySelectorAll('.faq-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const content = btn.nextElementSibling;
+          const icon = btn.querySelector('.faq-icon');
+          const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+
+          // Закрыть все остальные вкладки
+          document.querySelectorAll('.faq-content').forEach(el => el.style.maxHeight = null);
+          document.querySelectorAll('.faq-icon').forEach(ic => ic.classList.remove('rotate-180'));
+
+          if (!isOpen) {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            icon.classList.add('rotate-180');
+          }
+        });
+      });
+
+      // 12. ПЛАВНАЯ АНИМАЦИЯ ПОЯВЛЕНИЯ БЛОКОВ ПРИ ПРОКРУТКЕ
+      const reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        reveals.forEach(el => observer.observe(el));
+      } else {
+        reveals.forEach(el => el.classList.add('visible'));
+      }
+
+      // Первичная отрисовка каталога
+      applyFilters();
+    });
+  </script>
+</body>
+</html>
